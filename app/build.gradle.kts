@@ -62,8 +62,6 @@ dependencies {
     val nav_version = "2.8.0-beta02"
     implementation("androidx.navigation:navigation-compose:$nav_version")
 
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
-
     implementation(libs.kotlinx.serialization.json)
 
     implementation("com.google.dagger:hilt-android:2.51")
