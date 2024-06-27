@@ -19,8 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,19 +29,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.ssajudn.expensetracker.domain.model.Expense
+import com.ssajudn.expensetracker.data.local.entities.Expense
 import com.ssajudn.expensetracker.presentation.navigation.Routes
 import com.ssajudn.expensetracker.ui.theme.success
 import com.ssajudn.expensetracker.util.Utils
@@ -55,9 +52,6 @@ fun HomeScreen(navController: NavController) {
     val isFABExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
 
     Scaffold(
-        topBar = {
-            HomeTopBar()
-        },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = {
@@ -88,23 +82,10 @@ fun HomeScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth(),
                 list = state.value,
-                viewModel
+                viewModel = viewModel
             )
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun HomeTopBar() {
-    CenterAlignedTopAppBar(
-        title = {
-            Text(
-                text = "Expense Tracker",
-                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-            )
-        },
-    )
 }
 
 @Composable
@@ -114,13 +95,15 @@ fun CardItem(
     income: String,
     expense: String
 ) {
+    val gradientColors = listOf(Color(0xFF3F51B5), Color(0xFF2196F3))
+
     Column(
         modifier = modifier
             .padding(16.dp)
             .fillMaxWidth()
             .height(200.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.primaryContainer)
+            .background(Brush.linearGradient(gradientColors))
             .padding(16.dp)
     ) {
         Box(

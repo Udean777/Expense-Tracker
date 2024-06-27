@@ -1,24 +1,18 @@
 package com.ssajudn.expensetracker.presentation.add_screen
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.ssajudn.expensetracker.data.local.dao.ExpenseDao
-import com.ssajudn.expensetracker.domain.model.Expense
+import com.ssajudn.expensetracker.data.local.entities.Expense
+import com.ssajudn.expensetracker.domain.repository.ExpenseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AddExpenseViewModel @Inject constructor(
-    private val expenseDao: ExpenseDao
+    private val expenseRepository: ExpenseRepository
 ) : ViewModel() {
 
     suspend fun addExpense(expenseEntity: Expense): Boolean {
-        return try {
-            expenseDao.insertExpense(expenseEntity)
-            true
-        } catch (ex: Throwable) {
-            false
-        }
+        return expenseRepository.addExpense(expenseEntity)
     }
+
 }

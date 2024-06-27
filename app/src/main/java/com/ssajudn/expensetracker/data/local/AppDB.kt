@@ -2,8 +2,7 @@ package com.ssajudn.expensetracker.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.ssajudn.expensetracker.data.local.dao.ExpenseDao
-import com.ssajudn.expensetracker.domain.model.Expense
+import com.ssajudn.expensetracker.data.local.entities.Expense
 
 @Database(
     entities = [Expense::class],

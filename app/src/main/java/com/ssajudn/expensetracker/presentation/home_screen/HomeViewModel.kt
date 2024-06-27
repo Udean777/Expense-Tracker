@@ -1,22 +1,18 @@
 package com.ssajudn.expensetracker.presentation.home_screen
 
-import android.content.Context
-import android.view.View
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.ssajudn.expensetracker.R
-import com.ssajudn.expensetracker.data.local.AppDB
-import com.ssajudn.expensetracker.data.local.dao.ExpenseDao
-import com.ssajudn.expensetracker.domain.model.Expense
+import com.ssajudn.expensetracker.data.local.entities.Expense
+import com.ssajudn.expensetracker.domain.repository.ExpenseRepository
 import com.ssajudn.expensetracker.util.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val expenseDao: ExpenseDao
+    private val expenseRepository: ExpenseRepository
 ) : ViewModel() {
-    val expenses = expenseDao.getAllExpense()
+    val expenses = expenseRepository.getAllExpense()
 
     fun getBalance(expenses: List<Expense>): String {
         val balance = expenses.sumOf { expense ->

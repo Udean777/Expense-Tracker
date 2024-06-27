@@ -3,7 +3,7 @@ package com.ssajudn.expensetracker.di
 import android.app.Application
 import androidx.room.Room
 import com.ssajudn.expensetracker.data.local.AppDB
-import com.ssajudn.expensetracker.data.local.dao.ExpenseDao
+import com.ssajudn.expensetracker.data.local.ExpenseDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,11 +1,11 @@
-package com.ssajudn.expensetracker.data.local.dao
+package com.ssajudn.expensetracker.data.local
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.ssajudn.expensetracker.domain.model.Expense
+import com.ssajudn.expensetracker.data.local.entities.Expense
 import com.ssajudn.expensetracker.domain.model.ExpenseSummary
 import kotlinx.coroutines.flow.Flow
 

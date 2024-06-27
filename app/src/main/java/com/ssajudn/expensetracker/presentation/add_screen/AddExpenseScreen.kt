@@ -14,9 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
@@ -27,7 +25,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -41,16 +38,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.ssajudn.expensetracker.domain.model.Expense
+import com.ssajudn.expensetracker.data.local.entities.Expense
 import com.ssajudn.expensetracker.util.Utils
 import kotlinx.coroutines.launch
 
@@ -114,6 +108,7 @@ fun DataForm(modifier: Modifier, onAddExpenseClick: (model: Expense) -> Unit) {
     val dateDialogVisibility = remember { mutableStateOf(false) }
     val category = remember { mutableStateOf("") }
     val type = remember { mutableStateOf("") }
+    val gradientColors = listOf(Color(0xFF3F51B5), Color(0xFF2196F3))
 
     Column(
         modifier = modifier
@@ -121,7 +116,7 @@ fun DataForm(modifier: Modifier, onAddExpenseClick: (model: Expense) -> Unit) {
             .fillMaxWidth()
             .shadow(16.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.primaryContainer)
+            .background(Brush.linearGradient(gradientColors))
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
@@ -155,11 +150,6 @@ fun DataForm(modifier: Modifier, onAddExpenseClick: (model: Expense) -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { dateDialogVisibility.value = true },
-            enabled = false,
-            colors = OutlinedTextFieldDefaults.colors(
-                disabledBorderColor = Color.Black,
-                disabledTextColor = Color.Black
-            ),
             placeholder = { Text(text = "Date") }
         )
 
@@ -195,7 +185,9 @@ fun DataForm(modifier: Modifier, onAddExpenseClick: (model: Expense) -> Unit) {
                 )
                 onAddExpenseClick(model)
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
             Text(text = "Add", fontSize = 14.sp, color = Color.White)
         }
@@ -256,7 +248,9 @@ fun ExpenseDropDown(listOfItems: List<String>, onItemSelected: (item: String) ->
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded.value)
             }
         )
-        ExposedDropdownMenu(expanded = expanded.value, onDismissRequest = { expanded.value = false }) {
+        ExposedDropdownMenu(
+            expanded = expanded.value,
+            onDismissRequest = { expanded.value = false }) {
             listOfItems.forEach { item ->
                 DropdownMenuItem(
                     text = { Text(text = item) },

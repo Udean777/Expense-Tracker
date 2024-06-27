@@ -1,4 +1,4 @@
-package com.ssajudn.expensetracker.domain.model
+package com.ssajudn.expensetracker.data.local.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
