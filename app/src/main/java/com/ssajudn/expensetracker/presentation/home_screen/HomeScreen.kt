@@ -1,77 +1,72 @@
 package com.ssajudn.expensetracker.presentation.home_screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.ssajudn.expensetracker.data.local.entities.Expense
-import com.ssajudn.expensetracker.presentation.navigation.Routes
+import com.ssajudn.expensetracker.ui.theme.errorLight
+import com.ssajudn.expensetracker.ui.theme.secondaryContainerDark
+import com.ssajudn.expensetracker.ui.theme.secondaryDark
+import com.ssajudn.expensetracker.ui.theme.secondaryLight
 import com.ssajudn.expensetracker.ui.theme.success
 import com.ssajudn.expensetracker.util.Utils
 
 @Composable
-fun HomeScreen(navController: NavController) {
-    val viewModel: HomeViewModel = hiltViewModel()
-    val listState = rememberLazyListState()
-    val isFABExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
+fun HomeScreen(
+    navController: NavController,
+    viewModel: HomeViewModel = hiltViewModel()
+) {
+    val state by viewModel.expenses.collectAsState()
+    val expense = viewModel.getTotalExpense(state)
+    val income = viewModel.getTotalIncome(state)
+    val balance = viewModel.getBalance(state)
+    val isLoading by viewModel.isLoading.collectAsState()
 
-    Scaffold(
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = {
-                    navController.navigate(Routes.AddExpense)
-                },
-                icon = { Icon(imageVector = Icons.Default.Add, contentDescription = "Add") },
-                text = { Text(text = "Add Income/Expense") },
-                expanded = isFABExpanded
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
+    if (isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            val state = viewModel.expenses.collectAsState(initial = emptyList())
-            val expense = viewModel.getTotalExpense(state.value)
-            val income = viewModel.getTotalIncome(state.value)
-            val balance = viewModel.getBalance(state.value)
-
+            CircularProgressIndicator()
+        }
+    } else {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
             CardItem(
                 balance = balance,
                 income = income,
@@ -79,14 +74,17 @@ fun HomeScreen(navController: NavController) {
             )
 
             TransactionList(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                list = state.value,
-                viewModel = viewModel
+                modifier = Modifier.fillMaxWidth(),
+                list = state,
+                topList = viewModel.getTopTransactions(state),
+                onDelete = { expense ->
+                    viewModel.deleteTransaction(expense)
+                }
             )
         }
     }
 }
+
 
 @Composable
 fun CardItem(
@@ -95,15 +93,13 @@ fun CardItem(
     income: String,
     expense: String
 ) {
-    val gradientColors = listOf(Color(0xFF3F51B5), Color(0xFF2196F3))
-
     Column(
         modifier = modifier
             .padding(16.dp)
             .fillMaxWidth()
-            .height(200.dp)
+            .height(150.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(Brush.linearGradient(gradientColors))
+            .background(secondaryContainerDark)
             .padding(16.dp)
     ) {
         Box(
@@ -128,15 +124,13 @@ fun CardItem(
             CardRowItem(
                 title = "Income",
                 amount = income,
-                icon = Icons.Default.ArrowUpward,
                 textColor = success
             )
 
             CardRowItem(
                 title = "Expense",
                 amount = expense,
-                icon = Icons.Default.ArrowDownward,
-                textColor = MaterialTheme.colorScheme.error
+                textColor = Color.Red
             )
         }
 
@@ -148,7 +142,6 @@ fun CardRowItem(
     modifier: Modifier = Modifier,
     title: String,
     amount: String,
-    icon: ImageVector,
     textColor: Color
 ) {
     Column(
@@ -157,17 +150,11 @@ fun CardRowItem(
         Row(
             horizontalArrangement = Arrangement.Center
         ) {
-            Image(
-                imageVector = icon,
-                contentDescription = null,
-                Modifier.size(20.dp),
-            )
-
             Spacer(modifier = Modifier.size(3.dp))
 
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.titleMedium
             )
         }
 
@@ -175,15 +162,22 @@ fun CardRowItem(
 
         Text(
             text = amount,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
             color = textColor
         )
     }
 }
 
 @Composable
-fun TransactionList(modifier: Modifier, list: List<Expense>, viewModel: HomeViewModel) {
-    LazyColumn(modifier = modifier.padding(horizontal = 16.dp)) {
+fun TransactionList(
+    modifier: Modifier = Modifier,
+    list: List<Expense>,
+    topList: List<Expense>,
+    onDelete: (Expense) -> Unit
+) {
+    LazyColumn(
+        modifier = modifier.padding(horizontal = 16.dp)
+    ) {
         item {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -191,7 +185,7 @@ fun TransactionList(modifier: Modifier, list: List<Expense>, viewModel: HomeView
             ) {
                 Text(
                     text = "Recent Transactions",
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                 )
 
                 Text(
@@ -199,31 +193,103 @@ fun TransactionList(modifier: Modifier, list: List<Expense>, viewModel: HomeView
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                elevation = CardDefaults.cardElevation(4.dp),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    if (list.isEmpty()) {
+                        Text(
+                            text = "No recent transactions",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(vertical = 16.dp)
+                        )
+                    } else {
+                        list.forEach { item ->
+                            Spacer(modifier = Modifier.size(8.dp))
+
+                            TransactionItem(
+                                title = item.title,
+                                amount = Utils.formatToDecimalValue(item.amount),
+                                date = item.date,
+                                color = if (item.type == "Income") Color.Green else Color.Red,
+                                onDelete = { onDelete(item) }
+                            )
+                        }
+                    }
+                }
+            }
         }
-        items(list) { item ->
-            val icon = viewModel.getItemIcon(item)
 
-            Spacer(modifier = Modifier.size(8.dp))
+        item {
+            Spacer(modifier = Modifier.size(16.dp))
 
-            TransactionItem(
-                title = item.title,
-                amount = Utils.formatToDecimalValue(item.amount),
-                icon = icon,
-                date = item.date,
-                color = if (item.type == "Income") Color.Green else Color.Red
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Top Transactions",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                )
+
+                Text(
+                    text = "See all",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                elevation = CardDefaults.cardElevation(4.dp),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    if (topList.isEmpty()) {
+                        Text(
+                            text = "No top transactions",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(vertical = 16.dp)
+                        )
+                    } else {
+                        topList.forEach { item ->
+                            Spacer(modifier = Modifier.size(8.dp))
+
+                            TransactionItem(
+                                title = item.title,
+                                amount = Utils.formatToDecimalValue(item.amount),
+                                date = item.date,
+                                color = if (item.type == "Income") Color.Green else Color.Red,
+                                onDelete = { onDelete(item) }
+                            )
+                        }
+                    }
+                }
+            }
         }
-
     }
 }
+
 
 @Composable
 fun TransactionItem(
     title: String,
     amount: String,
-    icon: Int,
     date: String,
-    color: Color
+    color: Color,
+    onDelete: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -231,29 +297,47 @@ fun TransactionItem(
             .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row {
-            Image(
-                painter = painterResource(id = icon),
-                contentDescription = null,
-                modifier = Modifier.size(50.dp),
-            )
-            Spacer(modifier = Modifier.size(8.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
             Column {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
                 )
 
                 Text(
                     text = date,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             }
         }
-        Text(
-            text = amount,
-            color = color,
-            style = MaterialTheme.typography.bodyLarge
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = amount,
+                color = color,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            IconButton(onClick = onDelete) { // Tambahkan IconButton untuk aksi hapus
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete",
+                    tint = errorLight
+                )
+            }
+        }
     }
+}
+
+@Preview
+@Composable
+private fun HomePreview() {
+    HomeScreen(rememberNavController())
 }

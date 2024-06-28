@@ -14,7 +14,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
@@ -71,7 +74,8 @@ fun AddExpense(navController: NavController) {
                     }
                 }
             },
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues),
+            viewModel = viewModel
         )
     }
 }
@@ -101,102 +105,114 @@ fun AddTopBar(
 
 @RequiresApi(Build.VERSION_CODES.N)
 @Composable
-fun DataForm(modifier: Modifier, onAddExpenseClick: (model: Expense) -> Unit) {
-    val name = remember { mutableStateOf("") }
-    val amount = remember { mutableStateOf("") }
-    val date = remember { mutableStateOf(0L) }
+fun DataForm(
+    modifier: Modifier,
+    onAddExpenseClick: (model: Expense) -> Unit,
+    viewModel: AddExpenseViewModel
+) {
     val dateDialogVisibility = remember { mutableStateOf(false) }
-    val category = remember { mutableStateOf("") }
-    val type = remember { mutableStateOf("") }
-    val gradientColors = listOf(Color(0xFF3F51B5), Color(0xFF2196F3))
 
     Column(
         modifier = modifier
             .padding(16.dp)
             .fillMaxWidth()
-            .shadow(16.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(Brush.linearGradient(gradientColors))
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
         Text(text = "Name", fontSize = 14.sp)
+
         Spacer(modifier = Modifier.size(4.dp))
-        OutlinedTextField(
-            value = name.value,
-            onValueChange = { name.value = it },
+
+        TextField(
+            value = viewModel.name.value,
+            onValueChange = { viewModel.updateField(UpdateField.NAME, it) },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(text = "Name") }
+            placeholder = { Text(text = "Name", fontSize = 15.sp) },
         )
 
         Spacer(modifier = Modifier.size(8.dp))
 
         Text(text = "Amount", fontSize = 14.sp)
+
         Spacer(modifier = Modifier.size(4.dp))
-        OutlinedTextField(
-            value = amount.value,
-            onValueChange = { amount.value = it },
+
+        TextField(
+            value = viewModel.amount.value,
+            onValueChange = { viewModel.updateField(UpdateField.AMOUNT, it) },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(text = "Amount") }
+            placeholder = { Text(text = "Amount", fontSize = 15.sp) },
         )
 
         Spacer(modifier = Modifier.size(8.dp))
 
         Text(text = "Date", fontSize = 14.sp)
+
         Spacer(modifier = Modifier.size(4.dp))
-        OutlinedTextField(
-            value = if (date.value == 0L) "" else Utils.formatDateToHumanReadableForm(date.value),
+
+        TextField(
+            value = if (viewModel.date.value == 0L) "" else Utils.formatDateToHumanReadableForm(
+                viewModel.date.value
+            ),
             onValueChange = {},
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { dateDialogVisibility.value = true },
-            placeholder = { Text(text = "Date") }
+            placeholder = { Text(text = "Date", fontSize = 15.sp) },
+            readOnly = true,
+            enabled = false
         )
 
         Spacer(modifier = Modifier.size(8.dp))
 
         Text(text = "Category", fontSize = 14.sp)
+
         Spacer(modifier = Modifier.size(4.dp))
+
         ExpenseDropDown(
             listOf("Netflix", "Paypal", "Starbucks", "Salary", "Upwork"),
-            onItemSelected = { category.value = it }
+            onItemSelected = { viewModel.updateField(UpdateField.CATEGORY, it) }
         )
 
         Spacer(modifier = Modifier.size(8.dp))
 
         Text(text = "Type", fontSize = 14.sp)
+
         Spacer(modifier = Modifier.size(4.dp))
+
         ExpenseDropDown(
             listOf("Income", "Expense"),
-            onItemSelected = { type.value = it }
+            onItemSelected = { viewModel.updateField(UpdateField.TYPE, it) }
         )
 
         Spacer(modifier = Modifier.size(8.dp))
 
         Button(
+            modifier = Modifier.fillMaxWidth(),
             onClick = {
                 val model = Expense(
                     id = null,
-                    title = name.value,
-                    amount = amount.value.toDoubleOrNull() ?: 0.0,
-                    date = Utils.formatDateToHumanReadableForm(date.value),
-                    category = category.value,
-                    type = type.value,
+                    title = viewModel.name.value,
+                    amount = viewModel.amount.value.toDoubleOrNull() ?: 0.0,
+                    date = Utils.formatDateToHumanReadableForm(viewModel.date.value),
+                    category = viewModel.category.value,
+                    type = viewModel.type.value,
                 )
                 onAddExpenseClick(model)
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.primaryContainer)
+            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
         ) {
-            Text(text = "Add", fontSize = 14.sp, color = Color.White)
+            Text(
+                text = "Add",
+                fontSize = 14.sp,
+                color = Color.Black
+            )
         }
     }
 
     if (dateDialogVisibility.value) {
         ExpenseDatePickerDialog(
             onDateSelected = {
-                date.value = it
+                viewModel.updateField(UpdateField.DATE, it)
                 dateDialogVisibility.value = false
             },
             onDismiss = { dateDialogVisibility.value = false }
