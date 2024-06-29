@@ -6,7 +6,9 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,7 +48,11 @@ fun BottomNavBar(
                     text = "Home",
                     color = MaterialTheme.colorScheme.onBackground
                 )
-            }
+            },
+            colors = NavigationBarItemDefaults.colors(
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                selectedIconColor = MaterialTheme.colorScheme.primary
+            )
         )
 
         NavigationBarItem(
@@ -72,7 +78,11 @@ fun BottomNavBar(
                     text = "Account",
                     color = MaterialTheme.colorScheme.onBackground
                 )
-            }
+            },
+            colors = NavigationBarItemDefaults.colors(
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                selectedIconColor = MaterialTheme.colorScheme.primary
+            )
         )
     }
 }

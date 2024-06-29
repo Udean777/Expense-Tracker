@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -126,7 +127,7 @@ fun DataForm(
                 },
             )
 
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.height(25.dp))
 
             Text(text = "Date", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
 
@@ -142,16 +143,16 @@ fun DataForm(
                     .clickable { dateDialogVisibility.value = true },
                 placeholder = {
                     Text(
-                        text = "Date",
+                        text = "Select Date",
                         fontSize = 15.sp,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
                     )
                 },
                 readOnly = true,
                 enabled = false
             )
 
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.height(25.dp))
 
             Text(
                 text = "Category",
@@ -163,10 +164,11 @@ fun DataForm(
 
             ExpenseDropDown(
                 listOfItems = Common.listProvider,
-                onItemSelected = { viewModel.updateField(UpdateField.CATEGORY, it) }
+                onItemSelected = { viewModel.updateField(UpdateField.CATEGORY, it) },
+                initialText = "Transaction Category"
             )
 
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.height(25.dp))
 
             Text(text = "Type", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
 
@@ -175,9 +177,10 @@ fun DataForm(
             ExpenseDropDown(
                 listOfItems = listOf("Income", "Expense"),
                 onItemSelected = { viewModel.updateField(UpdateField.TYPE, it) },
+                initialText = "Transaction Type"
             )
 
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.height(25.dp))
 
             Text(text = "Note", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
 
@@ -238,15 +241,16 @@ fun ExpenseDatePickerDialog(
 @Composable
 fun ExpenseDropDown(
     listOfItems: List<String>,
-    onItemSelected: (item: String) -> Unit
+    onItemSelected: (item: String) -> Unit,
+    initialText: String,
 ) {
     val expanded = remember { mutableStateOf(false) }
-    val selectedItem = remember { mutableStateOf(listOfItems[0]) }
+    val selectedItem = remember { mutableStateOf(initialText) }
     ExposedDropdownMenuBox(
         expanded = expanded.value,
         onExpandedChange = { expanded.value = it }
     ) {
-        TextField(
+        OutlinedTextField(
             value = selectedItem.value,
             onValueChange = {},
             modifier = Modifier
@@ -255,7 +259,7 @@ fun ExpenseDropDown(
             readOnly = true,
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded.value)
-            }
+            },
         )
         ExposedDropdownMenu(
             expanded = expanded.value,

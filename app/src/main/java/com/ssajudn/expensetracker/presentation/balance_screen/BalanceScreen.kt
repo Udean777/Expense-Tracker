@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.ssajudn.expensetracker.presentation.components.TopBar
 import com.ssajudn.expensetracker.presentation.home_screen.CardItem
 import com.ssajudn.expensetracker.presentation.home_screen.HomeViewModel
@@ -14,6 +15,7 @@ import com.ssajudn.expensetracker.presentation.home_screen.HomeViewModel
 fun BalanceScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val state = viewModel.expenses.collectAsState(initial = emptyList())
     val expense = viewModel.getTotalExpense(state.value)
@@ -24,7 +26,7 @@ fun BalanceScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        TopBar()
+        TopBar(navController = navController)
 
         CardItem(
             balance = balance,

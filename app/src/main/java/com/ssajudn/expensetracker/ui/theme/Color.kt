@@ -2,7 +2,7 @@ package com.ssajudn.expensetracker.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val primaryLight = Color(0xFF006BD4)
+val primaryLight = Color(0xD20098D4)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFD6E3FF)
 val onPrimaryContainerLight = Color(0xFF001B3E)

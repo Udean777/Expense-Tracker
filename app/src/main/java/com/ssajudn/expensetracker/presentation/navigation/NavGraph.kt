@@ -25,7 +25,7 @@ fun NavGraphSetup(
         }
 
         composable(Routes.BalanceScreen.route) {
-            BalanceScreen()
+            BalanceScreen(navController = navController)
         }
     }
 }

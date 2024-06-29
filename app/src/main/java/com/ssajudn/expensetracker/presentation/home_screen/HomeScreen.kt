@@ -52,7 +52,7 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            TopBar()
+            TopBar(navController = navController)
 
             Spacer(modifier = Modifier.height(4.dp))
 
