@@ -98,7 +98,7 @@ fun CardRowItem(
 
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleSmall
             )
         }
 
@@ -106,7 +106,7 @@ fun CardRowItem(
 
         Text(
             text = amount,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodySmall,
             color = textColor
         )
     }

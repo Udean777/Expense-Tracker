@@ -20,7 +20,9 @@ class ExpenseRepositoryImpl @Inject constructor(
     }
 
     override fun getAllExpense(): Flow<List<Expense>> {
-        return expenseDao.getAllExpense()
+        return expenseDao.getAllExpense().map { expense ->
+            expense.sortedByDescending { it.date }
+        }
     }
 
     override fun getTopExpense(): Flow<List<Expense>> {

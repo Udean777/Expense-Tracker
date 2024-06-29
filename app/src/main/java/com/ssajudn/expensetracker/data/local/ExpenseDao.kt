@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ExpenseDao {
-    @Query("SELECT * FROM expense")
+    @Query("SELECT * FROM expense ORDER BY date DESC")
     fun getAllExpense(): Flow<List<Expense>>
 
     @Query("SELECT type, date, SUM(amount) AS total_amount FROM expense GROUP BY type, date ORDER BY date")

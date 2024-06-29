@@ -2,9 +2,13 @@ package com.ssajudn.expensetracker.presentation.home_screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.ssajudn.expensetracker.presentation.components.TopBar
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -44,10 +49,16 @@ fun HomeScreen(
         }
     } else {
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxSize()
         ) {
+            TopBar()
+
+            Spacer(modifier = Modifier.height(4.dp))
+
             Text(
-                text = currentDate, modifier = Modifier
+                text = currentDate,
+                modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center,
@@ -65,9 +76,6 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxWidth(),
                 list = state,
                 topList = viewModel.getTopTransactions(state),
-                onDelete = { expense ->
-                    viewModel.deleteTransaction(expense)
-                }
             )
         }
     }

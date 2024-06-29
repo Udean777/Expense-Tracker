@@ -7,14 +7,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +31,6 @@ fun TransactionList(
     modifier: Modifier = Modifier,
     list: List<Expense>,
     topList: List<Expense>,
-    onDelete: (Expense) -> Unit
 ) {
     LazyColumn(
         modifier = modifier.padding(horizontal = 16.dp)
@@ -82,7 +78,6 @@ fun TransactionList(
                                 amount = Utils.formatToDecimalValue(item.amount),
                                 date = item.date,
                                 color = if (item.type == "Income") Income else Expense,
-                                onDelete = { onDelete(item) }
                             )
                         }
                     }
@@ -135,7 +130,6 @@ fun TransactionList(
                                 amount = Utils.formatToDecimalValue(item.amount),
                                 date = item.date,
                                 color = if (item.type == "Income") Income else Expense,
-                                onDelete = { onDelete(item) }
                             )
                         }
                     }
@@ -152,51 +146,35 @@ fun TransactionItem(
     amount: String,
     date: String,
     color: Color,
-    onDelete: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Column {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
-                )
-
-                Text(
-                    text = amount,
-                    color = color,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+        Column {
             Text(
-                text = date,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onBackground
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2,
+                modifier = Modifier.width(200.dp)
             )
 
-            IconButton(onClick = onDelete) { // Tambahkan IconButton untuk aksi hapus
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete",
-                    tint = Expense,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
+            Text(
+                text = amount,
+                color = color,
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
+
+        Text(
+            text = date,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onBackground
+        )
     }
 }
