@@ -61,3 +61,7 @@ val inverseOnSurfaceDark = Color(0xFF2E3036)
 val inversePrimaryDark = Color(0xFF415F91)
 
 val success = Color(0xFF74CF00)
+val customGray = Color(0xFF2C2C2C)
+val Error = Color(0xFFB00020)
+val Expense = Color(0xFFFD3C4A)
+val Income = Color(0xFF00A86B)

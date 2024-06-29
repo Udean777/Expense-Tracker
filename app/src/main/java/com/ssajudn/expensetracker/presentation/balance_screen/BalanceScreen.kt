@@ -29,7 +29,8 @@ fun BalanceScreen(
         CardItem(
             balance = balance,
             income = income,
-            expense = expense
+            expense = expense,
+            title = "Total Balance"
         )
     }
 }

@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class ExpenseRepositoryImpl @Inject constructor(
     private val expenseDao: ExpenseDao
-): ExpenseRepository {
+) : ExpenseRepository {
     override suspend fun addExpense(expense: Expense): Boolean {
         return try {
             expenseDao.insertExpense(expense)
@@ -27,6 +27,10 @@ class ExpenseRepositoryImpl @Inject constructor(
         return expenseDao.getAllExpense().map { expense ->
             expense.sortedByDescending { it.amount }.take(5)
         }
+    }
+
+    override fun getCurrentMonthTransactions(): Flow<List<Expense>> {
+        return expenseDao.getCurrentMonthExpenses()
     }
 
     override suspend fun deleteTransaction(expense: Expense) {

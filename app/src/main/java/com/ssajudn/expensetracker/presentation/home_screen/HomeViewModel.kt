@@ -30,6 +30,15 @@ class HomeViewModel @Inject constructor(
         getExpenses()
     }
 
+    private fun getCurrentMonthExpenses() {
+        viewModelScope.launch {
+            expenseRepository.getCurrentMonthTransactions().collect { transactionList ->
+                _expenses.value = transactionList
+                _isLoading.value = false
+            }
+        }
+    }
+
     private fun getExpenses() {
         viewModelScope.launch {
             expenseRepository.getAllExpense().collect { expenseList ->
