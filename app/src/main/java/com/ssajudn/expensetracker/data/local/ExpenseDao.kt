@@ -14,9 +14,6 @@ interface ExpenseDao {
     @Query("SELECT * FROM expense ORDER BY date DESC")
     fun getAllExpense(): Flow<List<Expense>>
 
-    @Query("SELECT type, date, SUM(amount) AS total_amount FROM expense GROUP BY type, date ORDER BY date")
-    fun getAllExpenseByDate(): Flow<List<ExpenseSummary>>
-
     @Query("SELECT * FROM expense WHERE strftime('%Y-%m', substr(date, 7, 4) || '-' || substr(date, 4, 2) || '-' || substr(date, 1, 2)) = strftime('%Y-%m', 'now')")
     fun getCurrentMonthExpenses(): Flow<List<Expense>>
 

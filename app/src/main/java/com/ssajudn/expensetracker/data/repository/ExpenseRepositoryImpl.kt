@@ -31,6 +31,12 @@ class ExpenseRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getTenTransaction(): Flow<List<Expense>> {
+        return expenseDao.getAllExpense().map { expense ->
+            expense.sortedByDescending { it.date }.take(10)
+        }
+    }
+
     override fun getCurrentMonthExpenses(): Flow<List<Expense>> {
         return expenseDao.getCurrentMonthExpenses()
     }

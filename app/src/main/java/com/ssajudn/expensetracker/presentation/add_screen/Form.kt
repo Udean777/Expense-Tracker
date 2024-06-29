@@ -106,97 +106,97 @@ fun DataForm(
             modifier = modifier
                 .padding(16.dp)
                 .fillMaxWidth()
-                .padding(16.dp)
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
-            Text(text = "Amount", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
+            FormSection(
+                title = "Amount",
+                content = {
+                    OutlinedTextField(
+                        value = viewModel.amount.value,
+                        onValueChange = { viewModel.updateField(UpdateField.AMOUNT, it) },
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = {
+                            Text(
+                                text = "Example: 10000",
+                                fontSize = 15.sp,
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
+                            )
+                        },
+                    )
+                }
+            )
 
-            Spacer(modifier = Modifier.size(4.dp))
+            Spacer(modifier = Modifier.height(25.dp))
 
-            OutlinedTextField(
-                value = viewModel.amount.value,
-                onValueChange = { viewModel.updateField(UpdateField.AMOUNT, it) },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = {
-                    Text(
-                        text = "Example: 10000",
-                        fontSize = 15.sp,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
+            FormSection(
+                title = "Date",
+                content = {
+                    OutlinedTextField(
+                        value = if (viewModel.date.value == 0L) "" else Utils.formatDateToHumanReadableForm(
+                            viewModel.date.value
+                        ),
+                        onValueChange = {},
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { dateDialogVisibility.value = true },
+                        placeholder = {
+                            Text(
+                                text = "Select Date",
+                                fontSize = 15.sp,
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
+                            )
+                        },
+                        readOnly = true,
+                        enabled = false
+                    )
+                }
+            )
+
+            Spacer(modifier = Modifier.height(25.dp))
+
+            FormSection(
+                title = "Category",
+                content = {
+                    ExpenseDropDown(
+                        listOfItems = Common.listProvider,
+                        onItemSelected = { viewModel.updateField(UpdateField.CATEGORY, it) },
+                        initialText = "Transaction Category",
                     )
                 },
             )
 
             Spacer(modifier = Modifier.height(25.dp))
 
-            Text(text = "Date", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
-
-            Spacer(modifier = Modifier.size(4.dp))
-
-            OutlinedTextField(
-                value = if (viewModel.date.value == 0L) "" else Utils.formatDateToHumanReadableForm(
-                    viewModel.date.value
-                ),
-                onValueChange = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { dateDialogVisibility.value = true },
-                placeholder = {
-                    Text(
-                        text = "Select Date",
-                        fontSize = 15.sp,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
+            FormSection(
+                title = "Type",
+                content = {
+                    ExpenseDropDown(
+                        listOfItems = listOf("Income", "Expense"),
+                        onItemSelected = { viewModel.updateField(UpdateField.TYPE, it) },
+                        initialText = "Transaction Type"
                     )
-                },
-                readOnly = true,
-                enabled = false
+                }
             )
 
             Spacer(modifier = Modifier.height(25.dp))
 
-            Text(
-                text = "Category",
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-
-            Spacer(modifier = Modifier.size(4.dp))
-
-            ExpenseDropDown(
-                listOfItems = Common.listProvider,
-                onItemSelected = { viewModel.updateField(UpdateField.CATEGORY, it) },
-                initialText = "Transaction Category"
-            )
-
-            Spacer(modifier = Modifier.height(25.dp))
-
-            Text(text = "Type", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
-
-            Spacer(modifier = Modifier.size(4.dp))
-
-            ExpenseDropDown(
-                listOfItems = listOf("Income", "Expense"),
-                onItemSelected = { viewModel.updateField(UpdateField.TYPE, it) },
-                initialText = "Transaction Type"
-            )
-
-            Spacer(modifier = Modifier.height(25.dp))
-
-            Text(text = "Note", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
-
-            Spacer(modifier = Modifier.size(4.dp))
-
-            OutlinedTextField(
-                value = viewModel.name.value,
-                onValueChange = { viewModel.updateField(UpdateField.NAME, it) },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = {
-                    Text(
-                        text = "Example: My monthly salary",
-                        fontSize = 15.sp,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
+            FormSection(
+                title = "Note",
+                content = {
+                    OutlinedTextField(
+                        value = viewModel.name.value,
+                        onValueChange = { viewModel.updateField(UpdateField.NAME, it) },
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = {
+                            Text(
+                                text = "Example: My monthly salary",
+                                fontSize = 15.sp,
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
+                            )
+                        },
                     )
-                },
+                }
             )
         }
 
@@ -210,7 +210,6 @@ fun DataForm(
             )
         }
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -275,5 +274,17 @@ fun ExpenseDropDown(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun FormSection(
+    title: String,
+    content: @Composable () -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(text = title, fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
+        Spacer(modifier = Modifier.size(4.dp))
+        content()
     }
 }

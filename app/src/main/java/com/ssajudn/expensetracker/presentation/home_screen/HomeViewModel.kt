@@ -27,9 +27,6 @@ class HomeViewModel @Inject constructor(
     private val _currentMonthExpenses = MutableStateFlow<List<Expense>>(emptyList())
     val currentMonthExpenses: StateFlow<List<Expense>> = _currentMonthExpenses.asStateFlow()
 
-    private val _filteredExpenses = MutableStateFlow<List<Expense>>(emptyList())
-    val filteredExpenses: StateFlow<List<Expense>> = _filteredExpenses.asStateFlow()
-
     val expense: String
         get() = getTotalExpense(_currentMonthExpenses.value)
 
@@ -56,7 +53,7 @@ class HomeViewModel @Inject constructor(
     private fun getCurrentMonthExpenses() {
         viewModelScope.launch {
             expenseRepository.getCurrentMonthExpenses().collect { expenseList ->
-                _currentMonthExpenses.value = expenseList
+                _currentMonthExpenses.value = expenseList.sortedByDescending { it.amount }.take(5)
                 Log.d("BalanceScreen", "Current Month Expenses: $expenseList")
             }
         }
