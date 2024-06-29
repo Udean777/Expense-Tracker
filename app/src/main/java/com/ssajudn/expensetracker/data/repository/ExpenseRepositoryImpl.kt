@@ -29,8 +29,12 @@ class ExpenseRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getCurrentMonthTransactions(): Flow<List<Expense>> {
+    override fun getCurrentMonthExpenses(): Flow<List<Expense>> {
         return expenseDao.getCurrentMonthExpenses()
+    }
+
+    override fun getExpensesByMonth(yearMonth: String): Flow<List<Expense>> {
+        return expenseDao.getExpensesByMonth(yearMonth)
     }
 
     override suspend fun deleteTransaction(expense: Expense) {

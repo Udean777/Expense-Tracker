@@ -1,8 +1,8 @@
 package com.ssajudn.expensetracker.presentation.home_screen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ssajudn.expensetracker.R
 import com.ssajudn.expensetracker.data.local.entities.Expense
 import com.ssajudn.expensetracker.domain.repository.ExpenseRepository
 import com.ssajudn.expensetracker.util.Utils
@@ -10,10 +10,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.exp
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -26,17 +24,24 @@ class HomeViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    private val _currentMonthExpenses = MutableStateFlow<List<Expense>>(emptyList())
+    val currentMonthExpenses: StateFlow<List<Expense>> = _currentMonthExpenses.asStateFlow()
+
+    private val _filteredExpenses = MutableStateFlow<List<Expense>>(emptyList())
+    val filteredExpenses: StateFlow<List<Expense>> = _filteredExpenses.asStateFlow()
+
+    val expense: String
+        get() = getTotalExpense(_currentMonthExpenses.value)
+
+    val income: String
+        get() = getTotalIncome(_currentMonthExpenses.value)
+
+    val balance: String
+        get() = getBalance(_currentMonthExpenses.value)
+
     init {
         getExpenses()
-    }
-
-    private fun getCurrentMonthExpenses() {
-        viewModelScope.launch {
-            expenseRepository.getCurrentMonthTransactions().collect { transactionList ->
-                _expenses.value = transactionList
-                _isLoading.value = false
-            }
-        }
+        getCurrentMonthExpenses()
     }
 
     private fun getExpenses() {
@@ -48,6 +53,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun getCurrentMonthExpenses() {
+        viewModelScope.launch {
+            expenseRepository.getCurrentMonthExpenses().collect { expenseList ->
+                _currentMonthExpenses.value = expenseList
+                Log.d("BalanceScreen", "Current Month Expenses: $expenseList")
+            }
+        }
+    }
+
     fun deleteTransaction(expense: Expense) {
         viewModelScope.launch {
             expenseRepository.deleteTransaction(expense)
@@ -55,7 +69,8 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getTopTransactions(expenses: List<Expense>, limit: Int = 5): List<Expense> {
-        return expenses.sortedByDescending { it.amount }.take(limit)
+        val expenseTransactions = expenses.filter { it.type == "Expense" }
+        return expenseTransactions.sortedByDescending { it.amount }.take(limit)
     }
 
     fun getTotalIncome(expenses: List<Expense>): String {

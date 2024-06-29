@@ -27,8 +27,6 @@ import androidx.compose.ui.unit.dp
 import com.ssajudn.expensetracker.data.local.entities.Expense
 import com.ssajudn.expensetracker.ui.theme.Expense
 import com.ssajudn.expensetracker.ui.theme.Income
-import com.ssajudn.expensetracker.ui.theme.customGray
-import com.ssajudn.expensetracker.ui.theme.errorLight
 import com.ssajudn.expensetracker.util.Utils
 
 @Composable
@@ -72,7 +70,7 @@ fun TransactionList(
                 ) {
                     if (list.isEmpty()) {
                         Text(
-                            text = "No recent transactions",
+                            text = "Transactions not found",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier.padding(vertical = 16.dp)
@@ -93,14 +91,14 @@ fun TransactionList(
         }
 
         item {
-            Spacer(modifier = Modifier.size(16.dp))
+            Spacer(modifier = Modifier.size(8.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Top Transactions",
+                    text = "Top Expense",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onBackground
                 )
@@ -125,7 +123,7 @@ fun TransactionList(
                 ) {
                     if (topList.isEmpty()) {
                         Text(
-                            text = "No top transactions",
+                            text = "Top expense not found",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier.padding(vertical = 16.dp)
@@ -176,9 +174,9 @@ fun TransactionItem(
                 )
 
                 Text(
-                    text = date,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onBackground
+                    text = amount,
+                    color = color,
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }
@@ -186,15 +184,17 @@ fun TransactionItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = amount,
-                color = color,
-                style = MaterialTheme.typography.bodyMedium
+                text = date,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onBackground
             )
+
             IconButton(onClick = onDelete) { // Tambahkan IconButton untuk aksi hapus
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",
-                    tint = Expense
+                    tint = Expense,
+                    modifier = Modifier.size(18.dp)
                 )
             }
         }

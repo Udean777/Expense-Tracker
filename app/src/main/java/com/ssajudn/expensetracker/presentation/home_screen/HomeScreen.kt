@@ -1,32 +1,39 @@
 package com.ssajudn.expensetracker.presentation.home_screen
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val state by viewModel.expenses.collectAsState()
-    val expense = viewModel.getTotalExpense(state)
-    val income = viewModel.getTotalIncome(state)
-    val balance = viewModel.getBalance(state)
+    val state by viewModel.currentMonthExpenses.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    Log.d("HomeScreen", "Expenses: $state")
-    Log.d("HomeScreen", "Income: $income, Expense: $expense, Balance: $balance")
+    val currentDate = remember {
+        val dateFormat = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale.getDefault())
+        dateFormat.format(Date())
+    }
 
     if (isLoading) {
         Box(
@@ -39,10 +46,18 @@ fun HomeScreen(
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
+            Text(
+                text = currentDate, modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                fontSize = 18.sp
+            )
+
             CardItem(
-                balance = balance,
-                income = income,
-                expense = expense,
+                balance = viewModel.balance,
+                income = viewModel.income,
+                expense = viewModel.expense,
                 title = "Your Balance this month"
             )
 

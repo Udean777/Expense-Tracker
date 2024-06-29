@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ssajudn.expensetracker.data.local.entities.Expense
+import com.ssajudn.expensetracker.util.Common
 import com.ssajudn.expensetracker.util.Utils
 
 @RequiresApi(Build.VERSION_CODES.N)
@@ -50,7 +51,7 @@ fun DataForm(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        Text(text = "Name", fontSize = 14.sp, color = Color.White)
+        Text(text = "Name", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
 
         Spacer(modifier = Modifier.size(4.dp))
 
@@ -58,12 +59,12 @@ fun DataForm(
             value = viewModel.name.value,
             onValueChange = { viewModel.updateField(UpdateField.NAME, it) },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(text = "Name", fontSize = 15.sp, color = Color.White) },
+            placeholder = { Text(text = "Name", fontSize = 15.sp, color = MaterialTheme.colorScheme.onBackground) },
         )
 
         Spacer(modifier = Modifier.size(8.dp))
 
-        Text(text = "Amount", fontSize = 14.sp, color = Color.White)
+        Text(text = "Amount", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
 
         Spacer(modifier = Modifier.size(4.dp))
 
@@ -71,12 +72,12 @@ fun DataForm(
             value = viewModel.amount.value,
             onValueChange = { viewModel.updateField(UpdateField.AMOUNT, it) },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(text = "Amount", fontSize = 15.sp, color = Color.White) },
+            placeholder = { Text(text = "Amount", fontSize = 15.sp, color = MaterialTheme.colorScheme.onBackground) },
         )
 
         Spacer(modifier = Modifier.size(8.dp))
 
-        Text(text = "Date", fontSize = 14.sp, color = Color.White)
+        Text(text = "Date", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
 
         Spacer(modifier = Modifier.size(4.dp))
 
@@ -88,30 +89,30 @@ fun DataForm(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { dateDialogVisibility.value = true },
-            placeholder = { Text(text = "Date", fontSize = 15.sp, color = Color.White) },
+            placeholder = { Text(text = "Date", fontSize = 15.sp, color = MaterialTheme.colorScheme.onBackground) },
             readOnly = true,
             enabled = false
         )
 
         Spacer(modifier = Modifier.size(8.dp))
 
-        Text(text = "Category", fontSize = 14.sp, color = Color.White)
+        Text(text = "Category", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
 
         Spacer(modifier = Modifier.size(4.dp))
 
         ExpenseDropDown(
-            listOf("Netflix", "Paypal", "Starbucks", "Salary", "Upwork"),
+            listOfItems = Common.listProvider,
             onItemSelected = { viewModel.updateField(UpdateField.CATEGORY, it) }
         )
 
         Spacer(modifier = Modifier.size(8.dp))
 
-        Text(text = "Type", fontSize = 14.sp, color = Color.White)
+        Text(text = "Type", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
 
         Spacer(modifier = Modifier.size(4.dp))
 
         ExpenseDropDown(
-            listOf("Income", "Expense"),
+            listOfItems = listOf("Income", "Expense"),
             onItemSelected = { viewModel.updateField(UpdateField.TYPE, it) },
         )
 
@@ -130,12 +131,12 @@ fun DataForm(
                 )
                 onAddExpenseClick(model)
             },
-            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
+            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
         ) {
             Text(
                 text = "Add",
                 fontSize = 14.sp,
-                color = Color.Black
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
     }
