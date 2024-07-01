@@ -10,8 +10,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +35,7 @@ fun TransactionList(
     modifier: Modifier = Modifier,
     list: List<Expense>,
     topList: List<Expense>,
+    onDeleteTransaction: (Expense) -> Unit
 ) {
     LazyColumn(
         modifier = modifier.padding(horizontal = 16.dp)
@@ -78,6 +83,9 @@ fun TransactionList(
                                 amount = Utils.formatToDecimalValue(item.amount),
                                 date = item.date,
                                 color = if (item.type == "Income") Income else Expense,
+                                onDelete = {
+                                    onDeleteTransaction(item)
+                                }
                             )
                         }
                     }
@@ -130,6 +138,9 @@ fun TransactionList(
                                 amount = Utils.formatToDecimalValue(item.amount),
                                 date = item.date,
                                 color = if (item.type == "Income") Income else Expense,
+                                onDelete = {
+                                    onDeleteTransaction(item)
+                                }
                             )
                         }
                     }
@@ -146,6 +157,7 @@ fun TransactionItem(
     amount: String,
     date: String,
     color: Color,
+    onDelete: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -176,5 +188,13 @@ fun TransactionItem(
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onBackground
         )
+
+        IconButton(onClick = onDelete) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Delete",
+                tint = MaterialTheme.colorScheme.error
+            )
+        }
     }
 }

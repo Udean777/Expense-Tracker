@@ -6,6 +6,7 @@ object Common {
         "Salary",
         "Debit Card",
         "Visa Card",
-        "Master Card"
+        "Master Card",
+        "Cash"
     )
 }

@@ -45,7 +45,7 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator()
+            CircularProgressIndicator() 
         }
     } else {
         Column(
@@ -76,6 +76,9 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxWidth(),
                 list = state,
                 topList = viewModel.getTopTransactions(state),
+                onDeleteTransaction = { expense ->
+                    viewModel.deleteTransaction(expense)
+                }
             )
         }
     }

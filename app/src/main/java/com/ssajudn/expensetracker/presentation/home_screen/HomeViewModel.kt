@@ -62,6 +62,7 @@ class HomeViewModel @Inject constructor(
     fun deleteTransaction(expense: Expense) {
         viewModelScope.launch {
             expenseRepository.deleteTransaction(expense)
+            getCurrentMonthExpenses() // Refresh the current month expenses
         }
     }
 
