@@ -79,14 +79,6 @@ fun HistoryScreen(
             }
         }
 
-        CardItem(
-            modifier = Modifier.fillMaxWidth(),
-            balance = balance,
-            income = income,
-            expense = expense,
-            title = "Monthly Summary"
-        )
-
         TransactionList(
             modifier = Modifier.fillMaxWidth(),
             list = incomeListState.value,
