@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ssajudn.expensetracker.presentation.components.TopBar
-import com.ssajudn.expensetracker.presentation.home_screen.CardItem
+import com.ssajudn.expensetracker.presentation.components.CardItem
 import com.ssajudn.expensetracker.presentation.home_screen.HomeViewModel
 
 @Composable

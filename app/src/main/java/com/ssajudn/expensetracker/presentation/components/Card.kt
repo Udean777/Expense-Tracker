@@ -1,4 +1,4 @@
-package com.ssajudn.expensetracker.presentation.home_screen
+package com.ssajudn.expensetracker.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

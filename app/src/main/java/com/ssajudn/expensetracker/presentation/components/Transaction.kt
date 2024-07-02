@@ -1,4 +1,4 @@
-package com.ssajudn.expensetracker.presentation.home_screen
+package com.ssajudn.expensetracker.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,13 +32,16 @@ import com.ssajudn.expensetracker.data.local.entities.Expense
 import com.ssajudn.expensetracker.ui.theme.Expense
 import com.ssajudn.expensetracker.ui.theme.Income
 import com.ssajudn.expensetracker.util.Utils
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun TransactionList(
     modifier: Modifier = Modifier,
     list: List<Expense>,
     topList: List<Expense>,
-    onDeleteTransaction: (Expense) -> Unit
+    onDeleteTransaction: (Expense) -> Unit,
+    firstListTitle: String = "Recent Transactions",
+    secondListTitle: String = "Top Expense"
 ) {
     LazyColumn(
         modifier = modifier.padding(horizontal = 16.dp)
@@ -49,7 +52,7 @@ fun TransactionList(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Recent Transactions",
+                    text = firstListTitle,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onBackground
                 )
@@ -106,7 +109,7 @@ fun TransactionList(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Top Expense",
+                    text = secondListTitle,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onBackground
                 )

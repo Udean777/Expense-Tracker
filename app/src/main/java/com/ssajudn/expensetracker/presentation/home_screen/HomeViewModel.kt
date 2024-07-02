@@ -37,11 +37,11 @@ class HomeViewModel @Inject constructor(
         get() = getBalance(_currentMonthExpenses.value)
 
     init {
-        getExpenses()
+        getAllTransactions()
         getCurrentMonthExpenses()
     }
 
-    private fun getExpenses() {
+    private fun getAllTransactions() {
         viewModelScope.launch {
             expenseRepository.getAllExpense().collect { expenseList ->
                 _expenses.value = expenseList
@@ -62,7 +62,7 @@ class HomeViewModel @Inject constructor(
     fun deleteTransaction(expense: Expense) {
         viewModelScope.launch {
             expenseRepository.deleteTransaction(expense)
-            getCurrentMonthExpenses() // Refresh the current month expenses
+            getCurrentMonthExpenses()
         }
     }
 
