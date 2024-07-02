@@ -1,8 +1,10 @@
 package com.ssajudn.expensetracker.presentation.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -46,6 +48,36 @@ fun BottomNavBar(
             label = {
                 Text(
                     text = "Home",
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            },
+            colors = NavigationBarItemDefaults.colors(
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                selectedIconColor = MaterialTheme.colorScheme.primary
+            )
+        )
+
+        NavigationBarItem(
+            selected = currentDestination?.route == Routes.HistoryScreen.route,
+            onClick = {
+                navController.navigate(Routes.HistoryScreen.route) {
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            },
+            icon = {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.List,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            },
+            label = {
+                Text(
+                    text = "History",
                     color = MaterialTheme.colorScheme.onBackground
                 )
             },

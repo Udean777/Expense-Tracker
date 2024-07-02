@@ -7,4 +7,6 @@ sealed class Routes(val route: String) {
     data object AddExpense : Routes("add_expense")
 
     data object BalanceScreen : Routes("balance_screen")
+
+    data object HistoryScreen : Routes("history_screen")
 }

@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.ssajudn.expensetracker.presentation.add_screen.AddExpense
 import com.ssajudn.expensetracker.presentation.balance_screen.BalanceScreen
+import com.ssajudn.expensetracker.presentation.history_screen.HistoryScreen
 import com.ssajudn.expensetracker.presentation.home_screen.HomeScreen
 
 @RequiresApi(Build.VERSION_CODES.N)
@@ -26,6 +27,10 @@ fun NavGraphSetup(
 
         composable(Routes.BalanceScreen.route) {
             BalanceScreen(navController = navController)
+        }
+
+        composable(Routes.HistoryScreen.route) {
+            HistoryScreen(navController = navController)
         }
     }
 }
