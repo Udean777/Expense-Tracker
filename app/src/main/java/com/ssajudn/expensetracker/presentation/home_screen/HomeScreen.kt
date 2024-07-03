@@ -1,5 +1,6 @@
 package com.ssajudn.expensetracker.presentation.home_screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

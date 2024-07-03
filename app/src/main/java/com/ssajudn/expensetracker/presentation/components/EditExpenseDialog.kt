@@ -1,5 +1,6 @@
 package com.ssajudn.expensetracker.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -40,6 +41,7 @@ fun EditExpenseDialog(
     var showDatePicker by remember { mutableStateOf(false) }
 
     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = Date().time)
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -109,7 +111,7 @@ fun EditExpenseDialog(
                         confirmButton = {
                             TextButton(
                                 onClick = {
-                                    date = dateFormat.format(Date())
+                                    date = dateFormat.format(Date(datePickerState.selectedDateMillis!!))
                                     showDatePicker = false
                                 },
                             ) {
@@ -126,7 +128,7 @@ fun EditExpenseDialog(
                             }
                         },
                         content = {
-                            DatePicker(state = rememberDatePickerState(initialSelectedDateMillis = Date().time))
+                            DatePicker(state = datePickerState)
                         }
                     )
                 }
