@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ssajudn.expensetracker.presentation.components.CardItem
+import com.ssajudn.expensetracker.presentation.components.EditExpenseDialog
 import com.ssajudn.expensetracker.presentation.components.TopBar
 import com.ssajudn.expensetracker.presentation.components.TransactionList
 import java.text.SimpleDateFormat
@@ -45,7 +46,7 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator() 
+            CircularProgressIndicator()
         }
     } else {
         Column(
@@ -78,8 +79,24 @@ fun HomeScreen(
                 topList = viewModel.getTopTransactions(state),
                 onDeleteTransaction = { expense ->
                     viewModel.deleteTransaction(expense)
+                },
+                onEditClick = {
+                    viewModel.showEditDialog(it)
                 }
             )
+
+            if (viewModel.isEditDialogVisible.collectAsState().value) {
+                val transactionToEdit = viewModel.transactionToEdit.collectAsState().value
+                if (transactionToEdit != null) {
+                    EditExpenseDialog(
+                        expense = transactionToEdit,
+                        onConfirm = { updatedExpense ->
+                            viewModel.updateTransaction(updatedExpense)
+                        },
+                        onDismiss = { viewModel.hideEditDialog() }
+                    )
+                }
+            }
         }
     }
 }

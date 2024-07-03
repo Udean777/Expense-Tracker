@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ssajudn.expensetracker.presentation.components.CardItem
+import com.ssajudn.expensetracker.presentation.components.EditExpenseDialog
 import com.ssajudn.expensetracker.presentation.components.TopBar
 import com.ssajudn.expensetracker.presentation.components.TransactionList
 import com.ssajudn.expensetracker.presentation.home_screen.HomeViewModel
@@ -41,10 +42,6 @@ fun HistoryScreen(
 ) {
     val viewModel: HistoryViewModel = hiltViewModel()
     val homeViewModel: HomeViewModel = hiltViewModel()
-
-    val balance by viewModel.balance.collectAsState()
-    val income by viewModel.income.collectAsState()
-    val expense by viewModel.expense.collectAsState()
 
     val incomeListState = viewModel.incomeList.collectAsState(emptyList())
     val expenseListState = viewModel.expenseList.collectAsState(emptyList())
@@ -87,8 +84,24 @@ fun HistoryScreen(
                 homeViewModel.deleteTransaction(transaction)
             },
             firstListTitle = "Income",
-            secondListTitle = "Expense"
+            secondListTitle = "Expense",
+            onEditClick = { transaction ->
+                homeViewModel.showEditDialog(transaction)
+            }
         )
+
+        if (homeViewModel.isEditDialogVisible.collectAsState().value) {
+            val transactionToEdit = homeViewModel.transactionToEdit.collectAsState().value
+            if (transactionToEdit != null) {
+                EditExpenseDialog(
+                    expense = transactionToEdit,
+                    onConfirm = { updatedExpense ->
+                        homeViewModel.updateTransaction(updatedExpense)
+                    },
+                    onDismiss = { homeViewModel.hideEditDialog() }
+                )
+            }
+        }
 
         if (dateDialogVisibility.value) {
             PickerDialog(

@@ -41,7 +41,8 @@ fun TransactionList(
     topList: List<Expense>,
     onDeleteTransaction: (Expense) -> Unit,
     firstListTitle: String = "Recent Transactions",
-    secondListTitle: String = "Top Expense"
+    secondListTitle: String = "Top Expense",
+    onEditClick: (Expense) -> Unit
 ) {
     LazyColumn(
         modifier = modifier.padding(horizontal = 16.dp)
@@ -85,12 +86,15 @@ fun TransactionList(
                     } else {
                         list.forEach { item ->
                             TransactionItem(
-                                title = item.title,
+                                title = "${item.title} - (${item.category})",
                                 amount = Utils.formatToDecimalValue(item.amount),
                                 date = item.date,
                                 color = if (item.type == "Income") Income else Expense,
                                 onDelete = {
                                     onDeleteTransaction(item)
+                                },
+                                onEditClick = {
+                                    onEditClick(item)
                                 }
                             )
 
@@ -142,12 +146,15 @@ fun TransactionList(
                     } else {
                         topList.forEach { item ->
                             TransactionItem(
-                                title = item.title,
+                                title = "${item.title} - (${item.category})",
                                 amount = Utils.formatToDecimalValue(item.amount),
                                 date = item.date,
                                 color = if (item.type == "Income") Income else Expense,
                                 onDelete = {
                                     onDeleteTransaction(item)
+                                },
+                                onEditClick = {
+                                    onEditClick(item)
                                 }
                             )
                             Divider()
@@ -166,7 +173,8 @@ fun TransactionItem(
     amount: String,
     date: String,
     color: Color,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onEditClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -203,7 +211,7 @@ fun TransactionItem(
         }
 
         Row {
-            IconButton(onClick = onDelete) {
+            IconButton(onClick = onEditClick) {
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = "Edit",

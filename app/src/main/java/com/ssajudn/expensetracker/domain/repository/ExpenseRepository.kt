@@ -17,4 +17,6 @@ interface ExpenseRepository {
     fun getExpensesByMonth(yearMonth: String): Flow<List<Expense>>
 
     suspend fun deleteTransaction(expense: Expense)
+
+    suspend fun updateTransaction(expense: Expense)
 }

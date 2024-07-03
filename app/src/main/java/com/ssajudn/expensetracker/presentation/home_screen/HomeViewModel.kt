@@ -36,6 +36,12 @@ class HomeViewModel @Inject constructor(
     val balance: String
         get() = getBalance(_currentMonthExpenses.value)
 
+    private val _isEditDialogVisible = MutableStateFlow(false)
+    val isEditDialogVisible: StateFlow<Boolean> = _isEditDialogVisible
+
+    private val _transactionToEdit = MutableStateFlow<Expense?>(null)
+    val transactionToEdit: StateFlow<Expense?> = _transactionToEdit
+
     init {
         getAllTransactions()
         getCurrentMonthExpenses()
@@ -85,5 +91,22 @@ class HomeViewModel @Inject constructor(
         val balance = expenses.filter { it.type == "Income" }.sumOf { it.amount } -
                 expenses.filter { it.type == "Expense" }.sumOf { it.amount }
         return Utils.formatToDecimalValue(balance)
+    }
+
+    fun showEditDialog(expense: Expense) {
+        _transactionToEdit.value = expense
+        _isEditDialogVisible.value = true
+    }
+
+    fun hideEditDialog() {
+        _isEditDialogVisible.value = false
+        _transactionToEdit.value = null
+    }
+
+    fun updateTransaction(expense: Expense) {
+        viewModelScope.launch {
+            expenseRepository.updateTransaction(expense)
+            hideEditDialog()
+        }
     }
 }
