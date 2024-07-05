@@ -4,6 +4,10 @@ import android.app.Application
 import androidx.room.Room
 import com.ssajudn.expensetracker.data.local.AppDB
 import com.ssajudn.expensetracker.data.local.ExpenseDao
+import com.ssajudn.expensetracker.data.local.SavingsDao
+import com.ssajudn.expensetracker.data.local.migration.MIGRATION_1_2
+import com.ssajudn.expensetracker.data.repository.SavingsRepositoryImpl
+import com.ssajudn.expensetracker.domain.repository.SavingsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,22 +19,26 @@ import javax.inject.Singleton
 object AppModule {
     @Provides
     @Singleton
-    fun provideDB(
-        application: Application
-    ): AppDB {
-        return Room.databaseBuilder(
-            application,
-            AppDB::class.java,
-            "expense_db"
-        )
-            .fallbackToDestructiveMigration()
-            .build()
+    fun provideDB(application: Application): AppDB {
+        return AppDB.getDatabase(application)
     }
 
     @Provides
     @Singleton
     fun provideExpenseDao(appDB: AppDB): ExpenseDao {
         return appDB.expenseDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSavingsDao(appDB: AppDB): SavingsDao {
+        return appDB.savingsDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSavingsRepository(savingsDao: SavingsDao): SavingsRepository {
+        return SavingsRepositoryImpl(savingsDao)
     }
 
 }
