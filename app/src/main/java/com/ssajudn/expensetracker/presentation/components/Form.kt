@@ -1,4 +1,4 @@
-package com.ssajudn.expensetracker.presentation.add_screen
+package com.ssajudn.expensetracker.presentation.components
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -28,7 +28,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -39,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.ssajudn.expensetracker.data.local.entities.Expense
+import com.ssajudn.expensetracker.presentation.viewmodel.AddExpenseViewModel
+import com.ssajudn.expensetracker.presentation.viewmodel.UpdateField
 import com.ssajudn.expensetracker.util.Common
 import com.ssajudn.expensetracker.util.Utils
 
@@ -172,7 +173,7 @@ fun DataForm(
                 title = "Type",
                 content = {
                     ExpenseDropDown(
-                        listOfItems = listOf("Income", "Expense"),
+                        listOfItems = listOf("Income", "Expense", "Savings"),
                         onItemSelected = { viewModel.updateField(UpdateField.TYPE, it) },
                         initialText = "Transaction Type"
                     )

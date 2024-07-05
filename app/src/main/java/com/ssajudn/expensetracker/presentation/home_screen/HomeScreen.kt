@@ -1,6 +1,5 @@
 package com.ssajudn.expensetracker.presentation.home_screen
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +24,7 @@ import com.ssajudn.expensetracker.presentation.components.CardItem
 import com.ssajudn.expensetracker.presentation.components.EditExpenseDialog
 import com.ssajudn.expensetracker.presentation.components.TopBar
 import com.ssajudn.expensetracker.presentation.components.TransactionList
+import com.ssajudn.expensetracker.presentation.viewmodel.HomeViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

@@ -41,9 +41,9 @@ fun CardItem(
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.background)
     ) {
-        Column (
+        Column(
             modifier = Modifier.padding(16.dp)
-        ){
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -76,7 +76,6 @@ fun CardItem(
                 )
             }
         }
-
     }
 }
 

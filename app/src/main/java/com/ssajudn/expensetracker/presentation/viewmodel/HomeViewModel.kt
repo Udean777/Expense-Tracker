@@ -1,4 +1,4 @@
-package com.ssajudn.expensetracker.presentation.home_screen
+package com.ssajudn.expensetracker.presentation.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

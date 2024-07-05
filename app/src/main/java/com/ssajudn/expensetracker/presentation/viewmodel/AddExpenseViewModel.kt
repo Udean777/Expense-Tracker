@@ -1,4 +1,4 @@
-package com.ssajudn.expensetracker.presentation.add_screen
+package com.ssajudn.expensetracker.presentation.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel

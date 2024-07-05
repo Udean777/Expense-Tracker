@@ -1,4 +1,4 @@
-package com.ssajudn.expensetracker.presentation.history_screen
+package com.ssajudn.expensetracker.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
