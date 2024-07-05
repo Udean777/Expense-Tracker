@@ -31,7 +31,6 @@ import androidx.navigation.NavController
 import com.ssajudn.expensetracker.presentation.components.AddTargetDialog
 import com.ssajudn.expensetracker.presentation.components.CardItem
 import com.ssajudn.expensetracker.presentation.components.TopBar
-import com.ssajudn.expensetracker.presentation.viewmodel.AddSavingsViewModel
 import com.ssajudn.expensetracker.presentation.viewmodel.HomeViewModel
 
 @RequiresApi(Build.VERSION_CODES.N)
@@ -45,22 +44,9 @@ fun BalanceScreen(
     val expense = viewModel.getTotalExpense(state.value)
     val income = viewModel.getTotalIncome(state.value)
     val balance = viewModel.getBalance(state.value)
-    val savingViewModel: AddSavingsViewModel = hiltViewModel()
 
     val showAddTargetDialog = remember {
         mutableStateOf(false)
-    }
-
-    if (showAddTargetDialog.value) {
-        AddTargetDialog(
-            onDismiss = {
-                showAddTargetDialog.value = false
-            },
-            onAddTarget = { name, amount, date ->
-                savingViewModel.addSavingsTarget(name, amount, date)
-                showAddTargetDialog.value = false
-            }
-        )
     }
 
     Column(
@@ -75,42 +61,5 @@ fun BalanceScreen(
             expense = expense,
             title = "Total Balance"
         )
-
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .height(150.dp),
-            elevation = CardDefaults.cardElevation(2.dp),
-            shape = RoundedCornerShape(8.dp),
-            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.background)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    Column {
-                        Text(text = "Savings", fontSize = 16.sp)
-                        Text(
-                            text = balance, fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            }
-        }
-
-        FloatingActionButton(
-            onClick = { showAddTargetDialog.value = true },
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.End)
-        ) {
-            Icon(Icons.Default.Add, contentDescription = "Add Target")
-        }
     }
 }
