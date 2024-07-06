@@ -9,6 +9,8 @@ object Common {
         "Master Card",
         "Cash"
     )
+
+    val listTypeTransaction = listOf("Income", "Expense")
 }
 
 fun getMonthName(month: Int): String {

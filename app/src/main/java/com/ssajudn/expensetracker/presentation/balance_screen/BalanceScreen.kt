@@ -1,11 +1,12 @@
 package com.ssajudn.expensetracker.presentation.balance_screen
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,12 +26,10 @@ import com.ssajudn.expensetracker.presentation.components.TopBar
 import com.ssajudn.expensetracker.presentation.viewmodel.HomeViewModel
 import com.ssajudn.expensetracker.presentation.viewmodel.SavingsViewModel
 
-@RequiresApi(Build.VERSION_CODES.N)
 @Composable
 fun BalanceScreen(
-    modifier: Modifier = Modifier,
     viewModel: SavingsViewModel = hiltViewModel(),
-    navController: NavController,
+    homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     val savingList by viewModel.savings.collectAsState()
     var showAddSavingsDialog by remember {
@@ -39,11 +38,20 @@ fun BalanceScreen(
     var selectedSavings by remember {
         mutableStateOf<Savings?>(null)
     }
+    var showDeleteConfirmDialog by remember {
+        mutableStateOf<Savings?>(null)
+    }
+
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TopBar(navController = navController)
+        CardItem(
+            balance = homeViewModel.balance,
+            income = homeViewModel.income,
+            expense = homeViewModel.expense,
+            title = "Balance"
+        )
 
         SavingsHeader(
             onAddClick = {
@@ -57,6 +65,9 @@ fun BalanceScreen(
                     savings = savings,
                     onAddClick = { clickedSavings ->
                         selectedSavings = savings
+                    },
+                    onDeleteClick = { savingsToDelete ->
+                        showDeleteConfirmDialog = savingsToDelete
                     }
                 )
             }
@@ -74,9 +85,38 @@ fun BalanceScreen(
         AddAmountDialog(
             onDismiss = { selectedSavings = null },
             onConfirm = { amount ->
-                viewModel.updateSavingsAmount(savings.id, amount)
+                viewModel.updateSavingsAmount(savings.id ?: return@AddAmountDialog, amount)
                 selectedSavings = null
             },
+        )
+    }
+
+    showDeleteConfirmDialog?.let { savingsToDelete ->
+        AlertDialog(
+            onDismissRequest = {
+                showDeleteConfirmDialog = null
+            },
+            title = {
+                Text(text = "Delete Savings")
+            },
+            text = {
+                Text(text = "Are you sure you want to delete this savings?")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.deleteSavings(savingsToDelete)
+                        showDeleteConfirmDialog = null
+                    },
+                ) {
+                    Text(text = "Delete")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { showDeleteConfirmDialog = null }) {
+                    Text(text = "Cancel")
+                }
+            }
         )
     }
 }

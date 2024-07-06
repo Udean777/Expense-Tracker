@@ -19,4 +19,6 @@ interface ExpenseRepository {
     suspend fun deleteTransaction(expense: Expense)
 
     suspend fun updateTransaction(expense: Expense)
+
+    suspend fun deleteExpensesBySavingsTitle(savingsTitle: String)
 }

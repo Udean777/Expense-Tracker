@@ -32,7 +32,6 @@ import com.ssajudn.expensetracker.data.local.entities.Expense
 import com.ssajudn.expensetracker.ui.theme.Expense
 import com.ssajudn.expensetracker.ui.theme.Income
 import com.ssajudn.expensetracker.util.Utils
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun TransactionList(

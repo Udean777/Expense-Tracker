@@ -173,7 +173,7 @@ fun DataForm(
                 title = "Type",
                 content = {
                     ExpenseDropDown(
-                        listOfItems = listOf("Income", "Expense", "Savings"),
+                        listOfItems = Common.listTypeTransaction,
                         onItemSelected = { viewModel.updateField(UpdateField.TYPE, it) },
                         initialText = "Transaction Type"
                     )

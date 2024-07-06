@@ -25,4 +25,7 @@ interface SavingsDao {
 
     @Query("SELECT * FROM savings WHERE id = :id")
     suspend fun getSavingsById(id: Int): Savings?
+
+    @Query("SELECT * FROM savings WHERE title = :title LIMIT 1")
+    suspend fun getSavingsByTitle(title: String): Savings?
 }

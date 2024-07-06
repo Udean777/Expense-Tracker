@@ -13,4 +13,6 @@ interface SavingsRepository {
     fun getAllSavings(): Flow<List<Savings>>
 
     suspend fun getSavingsById(id: Int): Savings?
+
+    suspend fun getSavingsByTitle(title: String): Savings?
 }

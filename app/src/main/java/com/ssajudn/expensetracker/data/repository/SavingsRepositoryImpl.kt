@@ -30,4 +30,8 @@ class SavingsRepositoryImpl @Inject constructor(
     override suspend fun getSavingsById(id: Int): Savings? = withContext(Dispatchers.IO) {
         savingsDao.getSavingsById(id)
     }
+
+    override suspend fun getSavingsByTitle(title: String): Savings? {
+        return savingsDao.getSavingsByTitle(title)
+    }
 }

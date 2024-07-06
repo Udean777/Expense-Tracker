@@ -52,4 +52,8 @@ class ExpenseRepositoryImpl @Inject constructor(
     override suspend fun updateTransaction(expense: Expense) {
         expenseDao.updateExpense(expense)
     }
+
+    override suspend fun deleteExpensesBySavingsTitle(savingsTitle: String) {
+        expenseDao.deleteExpensesBySavingsTitle(savingsTitle)
+    }
 }

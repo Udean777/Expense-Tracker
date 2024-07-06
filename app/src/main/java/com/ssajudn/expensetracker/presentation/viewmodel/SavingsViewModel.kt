@@ -2,7 +2,9 @@ package com.ssajudn.expensetracker.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ssajudn.expensetracker.data.local.entities.Expense
 import com.ssajudn.expensetracker.data.local.entities.Savings
+import com.ssajudn.expensetracker.domain.repository.ExpenseRepository
 import com.ssajudn.expensetracker.domain.repository.SavingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -10,11 +12,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
+import kotlin.math.exp
 
 @HiltViewModel
 class SavingsViewModel @Inject constructor(
-    private val repository: SavingsRepository
+    private val repository: SavingsRepository,
+    private val expenseRepository: ExpenseRepository
 ) : ViewModel() {
 
     private val _savings = MutableStateFlow<List<Savings>>(emptyList())
@@ -41,7 +48,51 @@ class SavingsViewModel @Inject constructor(
             savings?.let {
                 val updatedSavings = it.copy(currentAmount = it.currentAmount + amount)
                 repository.updateSavings(updatedSavings)
+
+                val savingTransaction = Expense(
+                    id = null,
+                    title = "Savings: ${it.title}",
+                    amount = amount,
+                    date = getCurrentDate(),
+                    category = "Savings",
+                    type = "Expense"
+                )
+                expenseRepository.addExpense(savingTransaction)
             }
         }
     }
+
+    fun decreaseSavingsAmount(savingsTitle: String, amount: Double) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val savings = repository.getSavingsByTitle(savingsTitle)
+            savings?.let {
+                val updatedAmount = (it.currentAmount - amount).coerceAtLeast(0.0)
+                val updatedSavings = it.copy(currentAmount = updatedAmount)
+                repository.updateSavings(updatedSavings)
+            }
+        }
+    }
+
+    fun deleteSavings(savings: Savings) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteSavings(savings)
+
+            expenseRepository.deleteExpensesBySavingsTitle("Savings: ${savings.title}")
+
+            val refundExpense = Expense(
+                id = null,
+                title = "Refund: ${savings.title}",
+                amount = savings.currentAmount,
+                date = getCurrentDate(),
+                category = "Savings Refund",
+                type = "Income"
+            )
+            expenseRepository.addExpense(refundExpense)
+        }
+    }
+}
+
+private fun getCurrentDate(): String {
+    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    return sdf.format(Date())
 }

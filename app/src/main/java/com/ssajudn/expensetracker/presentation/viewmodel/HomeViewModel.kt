@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssajudn.expensetracker.data.local.entities.Expense
 import com.ssajudn.expensetracker.domain.repository.ExpenseRepository
+import com.ssajudn.expensetracker.domain.repository.SavingsRepository
 import com.ssajudn.expensetracker.util.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,8 +17,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val expenseRepository: ExpenseRepository
+    private val expenseRepository: ExpenseRepository,
+    private val savingsRepository: SavingsRepository
 ) : ViewModel() {
+    val savingsViewModel: SavingsViewModel = SavingsViewModel(savingsRepository, expenseRepository)
 
     private val _expenses = MutableStateFlow<List<Expense>>(emptyList())
     val expenses: StateFlow<List<Expense>> = _expenses.asStateFlow()
@@ -66,9 +70,12 @@ class HomeViewModel @Inject constructor(
     }
 
     fun deleteTransaction(expense: Expense) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             expenseRepository.deleteTransaction(expense)
-            getCurrentMonthExpenses()
+            if (expense.category == "Savings") {
+                val savingsTitle = expense.title.removePrefix("Savings: ")
+                savingsViewModel.decreaseSavingsAmount(savingsTitle, expense.amount)
+            }
         }
     }
 

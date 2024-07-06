@@ -28,4 +28,7 @@ interface ExpenseDao {
 
     @Update
     suspend fun updateExpense(expenseEntity: Expense)
+
+    @Query("DELETE FROM expense WHERE title LIKE :savingsTitle || '%' AND category = 'Savings'")
+    suspend fun deleteExpensesBySavingsTitle(savingsTitle: String)
 }
