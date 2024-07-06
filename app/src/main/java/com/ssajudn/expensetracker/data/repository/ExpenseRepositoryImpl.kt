@@ -4,6 +4,8 @@ import com.ssajudn.expensetracker.data.local.ExpenseDao
 import com.ssajudn.expensetracker.data.local.entities.Expense
 import com.ssajudn.expensetracker.domain.repository.ExpenseRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -55,5 +57,12 @@ class ExpenseRepositoryImpl @Inject constructor(
 
     override suspend fun deleteExpensesBySavingsTitle(savingsTitle: String) {
         expenseDao.deleteExpensesBySavingsTitle(savingsTitle)
+    }
+
+    override suspend fun getCurrentBalance(): Double {
+        return expenseDao.getAllExpense().first().let { expenses ->
+            expenses.filter { it.type == "Income" }.sumOf { it.amount } -
+                    expenses.filter { it.type == "Expense" }.sumOf { it.amount }
+        }
     }
 }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ssajudn.expensetracker.data.local.entities.Savings
+import com.ssajudn.expensetracker.ui.theme.success
 import com.ssajudn.expensetracker.util.Utils.formatToDecimalValue
 
 @Composable
@@ -50,8 +52,19 @@ fun SavingsCard(
             ) {
                 Text(text = savings.title, style = MaterialTheme.typography.titleMedium)
 
-                IconButton(onClick = { onDeleteClick(savings) }) {
-                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Savings")
+                if (savings.currentAmount == savings.targetAmount) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        tint = success,
+                        contentDescription = "Complete"
+                    )
+                } else {
+                    IconButton(onClick = { onDeleteClick(savings) }) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete Savings"
+                        )
+                    }
                 }
             }
 
@@ -80,8 +93,9 @@ fun SavingsCard(
                 onClick = {
                     onAddClick(savings)
                 },
+                enabled = savings.currentAmount < savings.targetAmount
             ) {
-                Text(text = "Add Amount")
+                Text(text = "Add Savings Amount")
             }
         }
     }

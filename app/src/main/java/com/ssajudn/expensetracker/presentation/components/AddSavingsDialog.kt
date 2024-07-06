@@ -1,11 +1,13 @@
 package com.ssajudn.expensetracker.presentation.components
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -14,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.ssajudn.expensetracker.presentation.viewmodel.SavingsViewModel
@@ -25,22 +28,38 @@ fun AddSavingsDialog(
 ) {
     var name by remember { mutableStateOf("") }
     var targetAmount by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add New Savings Target") },
+        title = {
+            Text(
+                "Add Your New Savings Target",
+                style = MaterialTheme.typography.titleLarge
+            )
+        },
         text = {
             Column {
                 TextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Target Name") }
+                    label = {
+                        Text(
+                            "What do you want to buy in the future?",
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = targetAmount,
                     onValueChange = { targetAmount = it },
-                    label = { Text("Target Amount") },
+                    label = {
+                        Text(
+                            "What's the price?",
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
             }
@@ -48,9 +67,14 @@ fun AddSavingsDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    val amount = targetAmount.toDoubleOrNull() ?: 0.0
-                    viewModel.addSavings(name, amount)
-                    onDismiss()
+                    if (name.isEmpty() || targetAmount.isEmpty()) {
+                        Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        val amount = targetAmount.toDoubleOrNull() ?: 0.0
+                        viewModel.addSavings(name, amount)
+                        onDismiss()
+                    }
                 }
             ) {
                 Text("Add")

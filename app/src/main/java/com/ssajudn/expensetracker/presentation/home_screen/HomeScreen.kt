@@ -25,6 +25,7 @@ import com.ssajudn.expensetracker.presentation.components.EditExpenseDialog
 import com.ssajudn.expensetracker.presentation.components.TopBar
 import com.ssajudn.expensetracker.presentation.components.TransactionList
 import com.ssajudn.expensetracker.presentation.viewmodel.HomeViewModel
+import com.ssajudn.expensetracker.util.Utils
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -36,6 +37,7 @@ fun HomeScreen(
 ) {
     val state by viewModel.currentMonthExpenses.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val balanceThisMonth = viewModel.getBalance(state)
 
     val currentDate = remember {
         val dateFormat = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale.getDefault())
@@ -68,7 +70,7 @@ fun HomeScreen(
             )
 
             CardItem(
-                balance = viewModel.balance,
+                balance = Utils.formatToDecimalValue(balanceThisMonth),
                 income = viewModel.income,
                 expense = viewModel.expense,
                 title = "Your Balance this month"

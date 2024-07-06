@@ -44,7 +44,6 @@ import com.ssajudn.expensetracker.util.Common
 import com.ssajudn.expensetracker.util.Utils
 
 @OptIn(ExperimentalMaterial3Api::class)
-@RequiresApi(Build.VERSION_CODES.N)
 @Composable
 fun DataForm(
     modifier: Modifier = Modifier,
@@ -120,7 +119,7 @@ fun DataForm(
                         placeholder = {
                             Text(
                                 text = "Example: 10000",
-                                fontSize = 15.sp,
+                                style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
                             )
                         },
@@ -144,7 +143,7 @@ fun DataForm(
                         placeholder = {
                             Text(
                                 text = "Select Date",
-                                fontSize = 15.sp,
+                                style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
                             )
                         },
@@ -192,7 +191,7 @@ fun DataForm(
                         placeholder = {
                             Text(
                                 text = "Example: My monthly salary",
-                                fontSize = 15.sp,
+                                style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
                             )
                         },

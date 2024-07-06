@@ -14,6 +14,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -22,6 +24,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +49,9 @@ fun TransactionList(
     secondListTitle: String = "Top Expense",
     onEditClick: (Expense) -> Unit
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var expenseToDelete by remember { mutableStateOf<Expense?>(null) }
+
     LazyColumn(
         modifier = modifier.padding(horizontal = 16.dp)
     ) {
@@ -90,7 +99,8 @@ fun TransactionList(
                                 date = item.date,
                                 color = if (item.type == "Income") Income else Expense,
                                 onDelete = {
-                                    onDeleteTransaction(item)
+                                    expenseToDelete = item
+                                    showDeleteDialog = true
                                 },
                                 onEditClick = {
                                     onEditClick(item)
@@ -150,7 +160,8 @@ fun TransactionList(
                                 date = item.date,
                                 color = if (item.type == "Income") Income else Expense,
                                 onDelete = {
-                                    onDeleteTransaction(item)
+                                    expenseToDelete = item
+                                    showDeleteDialog = true
                                 },
                                 onEditClick = {
                                     onEditClick(item)
@@ -163,8 +174,42 @@ fun TransactionList(
             }
         }
     }
+    if (showDeleteDialog) {
+        DeleteConfirmationDialog(
+            onConfirm = {
+                expenseToDelete?.let { onDeleteTransaction(it) }
+                showDeleteDialog = false
+                expenseToDelete = null
+            },
+            onDismiss = {
+                showDeleteDialog = false
+                expenseToDelete = null
+            }
+        )
+    }
 }
 
+@Composable
+fun DeleteConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Confirm Deletion") },
+        text = { Text("Are you sure you want to delete this transaction?") },
+        confirmButton = {
+            Button(onClick = onConfirm) {
+                Text("Delete")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
 
 @Composable
 fun TransactionItem(

@@ -18,6 +18,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -36,7 +37,6 @@ import java.util.Calendar
 @SuppressLint("NewApi")
 @Composable
 fun HistoryScreen(
-    modifier: Modifier = Modifier,
     navController: NavController
 ) {
     val viewModel: HistoryViewModel = hiltViewModel()
@@ -47,8 +47,8 @@ fun HistoryScreen(
 
     val dateDialogVisibility = remember { mutableStateOf(false) }
 
-    val selectedYearState = remember { mutableStateOf(0) }
-    val selectedMonthState = remember { mutableStateOf(0) }
+    val selectedYearState = remember { mutableIntStateOf(0) }
+    val selectedMonthState = remember { mutableIntStateOf(0) }
 
     val selectedDateText = remember {
         mutableStateOf("Get Monthly Data")
@@ -106,8 +106,8 @@ fun HistoryScreen(
             PickerDialog(
                 onDateSelected = { year, month ->
                     viewModel.getMonthlyData(year, month)
-                    selectedYearState.value = year
-                    selectedMonthState.value = month
+                    selectedYearState.intValue = year
+                    selectedMonthState.intValue = month
                     selectedDateText.value = "Monthly Data for ${getMonthName(month)} $year"
                     dateDialogVisibility.value = false
 

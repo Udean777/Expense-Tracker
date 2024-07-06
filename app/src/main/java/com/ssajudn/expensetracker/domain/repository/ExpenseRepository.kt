@@ -21,4 +21,6 @@ interface ExpenseRepository {
     suspend fun updateTransaction(expense: Expense)
 
     suspend fun deleteExpensesBySavingsTitle(savingsTitle: String)
+
+    suspend fun getCurrentBalance(): Double
 }

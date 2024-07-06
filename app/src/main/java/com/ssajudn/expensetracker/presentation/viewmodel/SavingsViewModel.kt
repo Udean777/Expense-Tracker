@@ -1,5 +1,6 @@
 package com.ssajudn.expensetracker.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssajudn.expensetracker.data.local.entities.Expense
@@ -11,21 +12,24 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
-import kotlin.math.exp
 
 @HiltViewModel
 class SavingsViewModel @Inject constructor(
     private val repository: SavingsRepository,
-    private val expenseRepository: ExpenseRepository
+    private val expenseRepository: ExpenseRepository,
 ) : ViewModel() {
 
     private val _savings = MutableStateFlow<List<Savings>>(emptyList())
     val savings: StateFlow<List<Savings>> = _savings.asStateFlow()
+
+    private val _errorMsg = MutableStateFlow<String?>(null)
+    val errorMsg: StateFlow<String?> = _errorMsg.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -33,6 +37,7 @@ class SavingsViewModel @Inject constructor(
                 _savings.value = savingsList
             }
         }
+
     }
 
     fun addSavings(name: String, targetAmount: Double) {
@@ -42,24 +47,33 @@ class SavingsViewModel @Inject constructor(
         }
     }
 
-    fun updateSavingsAmount(id: Int, amount: Double) {
+    fun updateSavingsAmount(id: Int, amount: Double, currentBalance: Double) {
         viewModelScope.launch(Dispatchers.IO) {
-            val savings = repository.getSavingsById(id)
-            savings?.let {
-                val updatedSavings = it.copy(currentAmount = it.currentAmount + amount)
-                repository.updateSavings(updatedSavings)
+            if (currentBalance < amount) {
+                _errorMsg.value = "Insufficient Balance"
+                return@launch
+            } else {
+                val savings = repository.getSavingsById(id)
+                savings?.let {
+                    val updatedSavings = it.copy(currentAmount = it.currentAmount + amount)
+                    repository.updateSavings(updatedSavings)
 
-                val savingTransaction = Expense(
-                    id = null,
-                    title = "Savings: ${it.title}",
-                    amount = amount,
-                    date = getCurrentDate(),
-                    category = "Savings",
-                    type = "Expense"
-                )
-                expenseRepository.addExpense(savingTransaction)
+                    val savingTransaction = Expense(
+                        id = null,
+                        title = "Savings: ${it.title}",
+                        amount = amount,
+                        date = getCurrentDate(),
+                        category = "Savings",
+                        type = "Expense"
+                    )
+                    expenseRepository.addExpense(savingTransaction)
+                }
             }
         }
+    }
+
+    fun clearErrorMessage() {
+        _errorMsg.value = null
     }
 
     fun decreaseSavingsAmount(savingsTitle: String, amount: Double) {
@@ -95,4 +109,9 @@ class SavingsViewModel @Inject constructor(
 private fun getCurrentDate(): String {
     val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     return sdf.format(Date())
+}
+
+sealed class SavingsResult {
+    object Success : SavingsResult()
+    object InsufficientBalance : SavingsResult()
 }

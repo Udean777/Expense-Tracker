@@ -20,7 +20,8 @@ class HomeViewModel @Inject constructor(
     private val expenseRepository: ExpenseRepository,
     private val savingsRepository: SavingsRepository
 ) : ViewModel() {
-    val savingsViewModel: SavingsViewModel = SavingsViewModel(savingsRepository, expenseRepository)
+    private val savingsViewModel: SavingsViewModel =
+        SavingsViewModel(savingsRepository, expenseRepository)
 
     private val _expenses = MutableStateFlow<List<Expense>>(emptyList())
     val expenses: StateFlow<List<Expense>> = _expenses.asStateFlow()
@@ -38,7 +39,7 @@ class HomeViewModel @Inject constructor(
         get() = getTotalIncome(_currentMonthExpenses.value)
 
     val balance: String
-        get() = getBalance(_currentMonthExpenses.value)
+        get() = getBalance(_currentMonthExpenses.value).toString()
 
     private val _isEditDialogVisible = MutableStateFlow(false)
     val isEditDialogVisible: StateFlow<Boolean> = _isEditDialogVisible
@@ -94,10 +95,10 @@ class HomeViewModel @Inject constructor(
         return Utils.formatToDecimalValue(expense)
     }
 
-    fun getBalance(expenses: List<Expense>): String {
+    fun getBalance(expenses: List<Expense>): Double {
         val balance = expenses.filter { it.type == "Income" }.sumOf { it.amount } -
                 expenses.filter { it.type == "Expense" }.sumOf { it.amount }
-        return Utils.formatToDecimalValue(balance)
+        return balance
     }
 
     fun showEditDialog(expense: Expense) {
