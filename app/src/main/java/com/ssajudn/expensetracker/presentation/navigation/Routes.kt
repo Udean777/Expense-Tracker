@@ -9,4 +9,7 @@ sealed class Routes(val route: String) {
     data object BalanceScreen : Routes("balance_screen")
 
     data object HistoryScreen : Routes("history_screen")
+
+    data object ChatScreen : Routes("chat_screen")
+
 }

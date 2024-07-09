@@ -42,6 +42,7 @@ import com.ssajudn.expensetracker.presentation.viewmodel.AddExpenseViewModel
 import com.ssajudn.expensetracker.presentation.viewmodel.UpdateField
 import com.ssajudn.expensetracker.util.Common
 import com.ssajudn.expensetracker.util.Utils
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -217,7 +218,7 @@ fun DataForm(
 fun ExpenseDatePickerDialog(
     onDateSelected: (date: Long) -> Unit, onDismiss: () -> Unit
 ) {
-    val datePickerState = rememberDatePickerState()
+    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = Date().time)
     val selectedDate = datePickerState.selectedDateMillis ?: 0L
     DatePickerDialog(
         onDismissRequest = { onDismiss() },

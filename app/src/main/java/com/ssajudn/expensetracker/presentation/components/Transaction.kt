@@ -66,11 +66,11 @@ fun TransactionList(
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
-                Text(
-                    text = "See all",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
+//                Text(
+//                    text = "See all",
+//                    style = MaterialTheme.typography.bodySmall,
+//                    color = MaterialTheme.colorScheme.onBackground
+//                )
             }
 
             Card(
@@ -127,11 +127,11 @@ fun TransactionList(
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
-                Text(
-                    text = "See all",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
+//                Text(
+//                    text = "See all",
+//                    style = MaterialTheme.typography.bodySmall,
+//                    color = MaterialTheme.colorScheme.onBackground
+//                )
             }
 
             Card(

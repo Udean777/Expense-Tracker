@@ -1,6 +1,7 @@
 package com.ssajudn.expensetracker.presentation.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Home
@@ -88,6 +89,36 @@ fun BottomNavBar(
         )
 
         NavigationBarItem(
+            selected = currentDestination?.route == Routes.ChatScreen.route,
+            onClick = {
+                navController.navigate(Routes.ChatScreen.route) {
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            },
+            icon = {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Chat,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            },
+            label = {
+                Text(
+                    text = "Gemini ✨",
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            },
+            colors = NavigationBarItemDefaults.colors(
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                selectedIconColor = MaterialTheme.colorScheme.primary
+            )
+        )
+
+        NavigationBarItem(
             selected = currentDestination?.route == Routes.BalanceScreen.route,
             onClick = {
                 navController.navigate(Routes.BalanceScreen.route) {
@@ -107,7 +138,7 @@ fun BottomNavBar(
             },
             label = {
                 Text(
-                    text = "Account",
+                    text = "Balance",
                     color = MaterialTheme.colorScheme.onBackground
                 )
             },

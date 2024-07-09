@@ -10,7 +10,6 @@ import com.ssajudn.expensetracker.presentation.components.DataForm
 import com.ssajudn.expensetracker.presentation.viewmodel.AddExpenseViewModel
 import kotlinx.coroutines.launch
 
-@RequiresApi(Build.VERSION_CODES.N)
 @Composable
 fun AddExpense(navController: NavHostController) {
     val viewModel: AddExpenseViewModel = hiltViewModel()

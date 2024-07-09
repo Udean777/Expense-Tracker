@@ -33,6 +33,7 @@ import com.ssajudn.expensetracker.presentation.viewmodel.HistoryViewModel
 import com.ssajudn.expensetracker.util.getMonthName
 import java.time.Instant
 import java.util.Calendar
+import java.util.Date
 
 @SuppressLint("NewApi")
 @Composable
@@ -125,7 +126,7 @@ fun PickerDialog(
     onDateSelected: (year: Int, month: Int) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val datePickerState = rememberDatePickerState()
+    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = Date().time)
     DatePickerDialog(
         onDismissRequest = { onDismiss() },
         confirmButton = {
