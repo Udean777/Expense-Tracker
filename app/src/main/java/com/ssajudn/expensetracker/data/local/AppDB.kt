@@ -4,18 +4,22 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.ssajudn.expensetracker.data.local.entities.ChatEntity
+import com.ssajudn.expensetracker.data.local.entities.ChatSessionEntity
 import com.ssajudn.expensetracker.data.local.entities.Expense
 import com.ssajudn.expensetracker.data.local.entities.Savings
 import com.ssajudn.expensetracker.data.local.migration.MIGRATION_1_2
+import com.ssajudn.expensetracker.data.local.migration.MIGRATION_2_3
 
 @Database(
-    entities = [Expense::class, Savings::class],
-    version = 2,
+    entities = [Expense::class, Savings::class, ChatSessionEntity::class, ChatEntity::class],
+    version = 3,
     exportSchema = false
 )
 abstract class AppDB : RoomDatabase() {
     abstract fun expenseDao(): ExpenseDao
     abstract fun savingsDao(): SavingsDao
+    abstract fun chatDao(): ChatDao
 
     companion object {
         @Volatile
@@ -28,7 +32,7 @@ abstract class AppDB : RoomDatabase() {
                     AppDB::class.java,
                     "expense_db"
                 )
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build()
                 INSTANCE = instance
                 instance

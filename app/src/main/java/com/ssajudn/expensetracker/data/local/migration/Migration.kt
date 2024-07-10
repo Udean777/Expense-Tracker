@@ -28,3 +28,30 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
         database.execSQL("ALTER TABLE savings_new RENAME TO savings")
     }
 }
+
+val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("""
+            CREATE TABLE IF NOT EXISTS `ChatSessionEntity` (
+                `id` TEXT NOT NULL, 
+                `name` TEXT NOT NULL, 
+                `lastUpdated` INTEGER NOT NULL, 
+                `lastMessage` TEXT NOT NULL, 
+                PRIMARY KEY(`id`)
+            )
+        """.trimIndent())
+
+        database.execSQL("""
+            CREATE TABLE IF NOT EXISTS `ChatEntity` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                `sessionId` TEXT NOT NULL, 
+                `prompt` TEXT NOT NULL, 
+                `isFromUser` INTEGER NOT NULL, 
+                `timestamp` INTEGER NOT NULL,
+                FOREIGN KEY(`sessionId`) REFERENCES `ChatSessionEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+            )
+        """.trimIndent())
+
+        database.execSQL("CREATE INDEX IF NOT EXISTS `index_ChatEntity_sessionId` ON `ChatEntity` (`sessionId`)")
+    }
+}

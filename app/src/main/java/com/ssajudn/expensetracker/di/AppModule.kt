@@ -3,10 +3,13 @@ package com.ssajudn.expensetracker.di
 import android.app.Application
 import androidx.room.Room
 import com.ssajudn.expensetracker.data.local.AppDB
+import com.ssajudn.expensetracker.data.local.ChatDao
 import com.ssajudn.expensetracker.data.local.ExpenseDao
 import com.ssajudn.expensetracker.data.local.SavingsDao
 import com.ssajudn.expensetracker.data.local.migration.MIGRATION_1_2
+import com.ssajudn.expensetracker.data.repository.ChatRepositoryImpl
 import com.ssajudn.expensetracker.data.repository.SavingsRepositoryImpl
+import com.ssajudn.expensetracker.domain.repository.ChatRepository
 import com.ssajudn.expensetracker.domain.repository.SavingsRepository
 import dagger.Module
 import dagger.Provides
@@ -41,4 +44,15 @@ object AppModule {
         return SavingsRepositoryImpl(savingsDao)
     }
 
+    @Provides
+    @Singleton
+    fun provideChatDao(appDB: AppDB): ChatDao {
+        return appDB.chatDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideChatRepository(chatDao: ChatDao): ChatRepository {
+        return ChatRepositoryImpl(chatDao)
+    }
 }

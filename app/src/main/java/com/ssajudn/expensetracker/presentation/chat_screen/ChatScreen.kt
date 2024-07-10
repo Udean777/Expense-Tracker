@@ -13,20 +13,33 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.rounded.AddPhotoAlternate
 import androidx.compose.material.icons.rounded.Send
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
@@ -35,10 +48,13 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
+import com.ssajudn.expensetracker.presentation.components.ChatDrawer
 import com.ssajudn.expensetracker.presentation.viewmodel.ChatViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen() {
     val uriState = remember { MutableStateFlow<Uri?>(null) }
@@ -49,99 +65,169 @@ fun ChatScreen() {
         }
     )
     val chatViewModel = viewModel<ChatViewModel>()
-    val chatState = chatViewModel.chatState.collectAsState().value
+    val chatState by chatViewModel.chatState.collectAsState()
+    val chatSessions by chatViewModel.chatSession.collectAsState()
+    val currentSessionId by chatViewModel.currentSessionId.collectAsState()
+
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
     val bitmap = getBitmap(uriState.collectAsState().value)
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Bottom
+    val focusRequester = remember {
+        FocusRequester()
+    }
+    val textFieldValue = remember {
+        mutableStateOf(TextFieldValue(chatState.prompt))
+    }
+
+    LaunchedEffect(key1 = currentSessionId) {
+        textFieldValue.value = TextFieldValue(chatState.prompt, TextRange(chatState.prompt.length))
+        focusRequester.requestFocus()
+    }
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ChatDrawer(
+                chatSessions = chatSessions,
+                onSessionSelected = { sessionId ->
+                    chatViewModel.selectSession(sessionId)
+                    scope.launch { drawerState.close() }
+                },
+                onNewChatClicked = {
+                    chatViewModel.createNewSession()
+                    scope.launch { drawerState.open() }
+                }
+            )
+        },
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            reverseLayout = true
-        ) {
-            itemsIndexed(chatState.chatList) { index, chat ->
-                if (chat.isFromUser) {
-                    UserChatItem(
-                        prompt = chat.prompt, bitmap = chat.bitmap
-                    )
-                } else {
-                    ModelChatItem(response = chat.prompt)
-                }
-            }
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp, start = 4.dp, end = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Column {
-                bitmap?.let {
-                    Image(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .padding(bottom = 2.dp)
-                            .clip(RoundedCornerShape(6.dp)),
-                        contentDescription = "picked image",
-                        contentScale = ContentScale.Crop,
-                        bitmap = it.asImageBitmap()
-                    )
-                }
-
-                Icon(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clickable {
-                            imagePicker.launch(
-                                PickVisualMediaRequest
-                                    .Builder()
-                                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                    .build()
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(text = "Chat")
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "Drawer Menu"
                             )
-                        },
-                    imageVector = Icons.Rounded.AddPhotoAlternate,
-                    contentDescription = "Add Photo",
-                    tint = MaterialTheme.colorScheme.primary
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { chatViewModel.createNewSession() }) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add new chat"
+                            )
+                        }
+                    }
                 )
             }
+        ) { paddingValues ->
+            Box(modifier = Modifier.padding(paddingValues)) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        reverseLayout = true
+                    ) {
+                        itemsIndexed(chatState.chatList) { index, chat ->
+                            if (chat.isFromUser) {
+                                UserChatItem(
+                                    prompt = chat.prompt, bitmap = chat.bitmap
+                                )
+                            } else {
+                                ModelChatItem(response = chat.prompt)
+                            }
+                        }
+                    }
 
-            Spacer(modifier = Modifier.width(8.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp, start = 4.dp, end = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
 
-            TextField(
-                modifier = Modifier
-                    .weight(1f),
-                value = chatState.prompt,
-                onValueChange = {
-                    chatViewModel.onEvent(ChatUiEvent.UpdatePrompt(it))
-                },
-                placeholder = {
-                    Text(text = "Type a prompt")
+                        Column {
+                            bitmap?.let {
+                                Image(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .padding(bottom = 2.dp)
+                                        .clip(RoundedCornerShape(6.dp)),
+                                    contentDescription = "picked image",
+                                    contentScale = ContentScale.Crop,
+                                    bitmap = it.asImageBitmap()
+                                )
+                            }
+
+                            Icon(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clickable {
+                                        imagePicker.launch(
+                                            PickVisualMediaRequest
+                                                .Builder()
+                                                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                                .build()
+                                        )
+                                    },
+                                imageVector = Icons.Rounded.AddPhotoAlternate,
+                                contentDescription = "Add Photo",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        TextField(
+                            modifier = Modifier
+                                .weight(1f)
+                                .focusRequester(focusRequester),
+                            value = textFieldValue.value,
+                            onValueChange = {
+                                textFieldValue.value = it
+                                chatViewModel.onEvent(ChatUiEvent.UpdatePrompt(it.text))
+                            },
+                            placeholder = {
+                                Text(text = "Type a prompt")
+                            }
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Icon(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clickable {
+                                    chatViewModel.onEvent(
+                                        ChatUiEvent.SendPrompt(
+                                            chatState.prompt,
+                                            bitmap
+                                        )
+                                    )
+                                    uriState.update { null }
+                                },
+                            imageVector = Icons.Rounded.Send,
+                            contentDescription = "Send prompt",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+
+                    }
+
                 }
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Icon(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clickable {
-                        chatViewModel.onEvent(ChatUiEvent.SendPrompt(chatState.prompt, bitmap))
-                        uriState.update { null }
-                    },
-                imageVector = Icons.Rounded.Send,
-                contentDescription = "Send prompt",
-                tint = MaterialTheme.colorScheme.primary
-            )
-
+            }
         }
-
     }
 }
 
